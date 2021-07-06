@@ -377,6 +377,16 @@
           "internalType": "uint256",
           "name": "amount1",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unusedAmount0",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unusedAmount1",
+          "type": "uint256"
         }
       ],
       "stateMutability": "nonpayable",
