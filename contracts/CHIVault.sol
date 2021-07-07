@@ -269,16 +269,21 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         nonReentrant
         onlyManager
 <<<<<<< HEAD
+<<<<<<< HEAD
         returns (uint256 withdrawal0, uint256 withdrawal1)
 =======
         returns (uint256 amount0, uint256 amount1, uint256 unusedAmount0, uint256 unusedAmount1)
 >>>>>>> 1e4f782 (update withdraw and unsub)
+=======
+        returns (uint256 amount0, uint256 amount1)
+>>>>>>> d1d0933 (revert CHIVault withdraw functions)
     {
         require(shares > 0, "s");
         require(to != address(0) && to != address(this), "to");
 
         // collect fee
         harvestFee();
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         (uint256 total0, uint256 total1) = getTotalAmounts();
@@ -330,6 +335,10 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
 =======
         unusedAmount0 = _balanceToken0().mul(shares).div(_totalSupply);
         unusedAmount1 = _balanceToken1().mul(shares).div(_totalSupply);
+=======
+        uint256 unusedAmount0 = _balanceToken0().mul(shares).div(_totalSupply);
+        uint256 unusedAmount1 = _balanceToken1().mul(shares).div(_totalSupply);
+>>>>>>> d1d0933 (revert CHIVault withdraw functions)
         if (unusedAmount0 > 0) token0.safeTransfer(to, unusedAmount0);
         if (unusedAmount1 > 0) token1.safeTransfer(to, unusedAmount1);
 

@@ -64,7 +64,7 @@ interface ICHIVault {
         uint256 amount0Min,
         uint256 amount1Min,
         address to
-    ) external returns (uint256 amount0, uint256 amount1, uint256 unusedAmount0, uint256 unusedAmount1);
+    ) external returns (uint256 amount0, uint256 amount1);
 
     function addLiquidityToPosition(
         uint256 _rangeIndex,
