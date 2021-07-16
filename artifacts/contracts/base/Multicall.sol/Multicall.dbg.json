@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "buildInfo": "../../../build-info/f78255c173825d73b6c557f979ca4ca5.json"
 =======
   "buildInfo": "../../../build-info/e600a02134f1f30a6d2e22c25801de1c.json"
@@ -13,6 +14,8 @@
 >>>>>>> 81f5dbf (revert CHIVault withdraw functions)
 =======
 >>>>>>> 5217503 (update)
+=======
+>>>>>>> 4a961f0 (update upgradeable contract)
   "buildInfo": "../../../build-info/e600a02134f1f30a6d2e22c25801de1c.json"
 =======
   "buildInfo": "../../../build-info/43373a2c8e3fb26b8694bca1ac862e71.json"
@@ -29,5 +32,11 @@
 =======
   "buildInfo": "../../../build-info/244709fdfd109518daa69ce04fa63bcf.json"
 >>>>>>> f243f50 (update)
+<<<<<<< HEAD
 >>>>>>> 5217503 (update)
+=======
+=======
+  "buildInfo": "../../../build-info/9f09eb54319189dc0f77146e7ee5d739.json"
+>>>>>>> 22dc752 (update upgradeable contract)
+>>>>>>> 4a961f0 (update upgradeable contract)
 }
