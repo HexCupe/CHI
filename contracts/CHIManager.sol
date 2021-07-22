@@ -3,13 +3,15 @@
 pragma solidity ^0.7.6;
 pragma abicoder v2;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
+
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 
@@ -18,16 +20,19 @@ import "@uniswap/v3-periphery/contracts/libraries/PoolAddress.sol";
 import "./libraries/YANGPosition.sol";
 
 import "./interfaces/ICHIManager.sol";
-import "./base/Multicall.sol";
 import "./interfaces/ICHIVaultDeployer.sol";
 
-contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
+contract CHIManager is
+    ICHIManager,
+    ReentrancyGuardUpgradeable,
+    ERC721Upgradeable
+{
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     using YANGPosition for mapping(bytes32 => YANGPosition.Info);
     using YANGPosition for YANGPosition.Info;
     // CHI ID
-    uint176 private _nextId = 1;
+    uint176 private _nextId;
 
     /// YANG position
     mapping(bytes32 => YANGPosition.Info) public positions;
@@ -37,6 +42,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         address operator;
         address pool;
         address vault;
+        bool paused;
+        bool archived;
     }
 
     /// @dev The token ID data
@@ -48,17 +55,21 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
     address public deployer;
     bytes32 public merkleRoot;
 
-    constructor(
+    // initialize
+    function initialize(
+        uint176 _initId,
         address _v3Factory,
         address _yangNFT,
         address _deployer,
         bytes32 _merkleRoot
-    ) ERC721("YIN Uniswap V3 Positions Manager", "CHI") {
+    ) public initializer {
         manager = msg.sender;
         v3Factory = _v3Factory;
         yangNFT = _yangNFT;
         deployer = _deployer;
         merkleRoot = _merkleRoot;
+        _nextId = _initId;
+        __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
     }
 
     modifier onlyYANG {
@@ -73,7 +84,7 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
 
     modifier onlyGovs(bytes32[] calldata merkleProof) {
         bytes32 node = keccak256(abi.encodePacked(msg.sender));
-        require(MerkleProof.verify(merkleProof, merkleRoot, node), 'only govs');
+        require(MerkleProof.verify(merkleProof, merkleRoot, node), "only govs");
         _;
     }
 
@@ -84,8 +95,7 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         _tempChiId = 0;
     }
 
-    function updateMerkleRoot(bytes32 _merkleRoot) external onlyManager
-    {
+    function updateMerkleRoot(bytes32 _merkleRoot) external onlyManager {
         merkleRoot = _merkleRoot;
     }
 
@@ -143,7 +153,9 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         _chi[tokenId] = CHIData({
             operator: params.recipient,
             pool: uniswapPool,
-            vault: vault
+            vault: vault,
+            paused: false,
+            archived: false
         });
 
         emit Create(tokenId, uniswapPool, vault, params.vaultFee);
@@ -169,6 +181,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         )
     {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         (shares, amount0, amount1) = ICHIVault(_chi_.vault).deposit(
             yangId,
             amount0Desired,
@@ -195,10 +209,12 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         nonReentrant
         returns (uint256 amount0, uint256 amount1)
     {
+        CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.archived, 'CHI Archived');
+
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         YANGPosition.Info storage _position = positions[positionKey];
         require(_position.shares >= shares, "s");
-        CHIData storage _chi_ = _chi[tokenId];
         (amount0, amount1) = ICHIVault(_chi_.vault).withdraw(
             yangId,
             shares,
@@ -236,6 +252,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         int24 tickUpper
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         ICHIVault(_chi_.vault).addRange(tickLower, tickUpper);
     }
 
@@ -245,6 +263,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         int24 tickUpper
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         ICHIVault(_chi_.vault).removeRange(tickLower, tickUpper);
     }
 
@@ -254,6 +274,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         RangeParams[] calldata removeRanges
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         for (uint256 i = 0; i < addRanges.length; i++) {
             ICHIVault(_chi_.vault).addRange(
                 addRanges[i].tickLower,
@@ -275,6 +297,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         address to
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         ICHIVault(_chi_.vault).collectProtocol(amount0, amount1, to);
     }
 
@@ -285,6 +309,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         uint256 amount1Desired
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.paused, 'CHI Paused');
+
         ICHIVault(_chi_.vault).addLiquidityToPosition(
             rangeIndex,
             amount0Desired,
@@ -298,6 +324,8 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         uint128 liquidity
     ) external override isAuthorizedForToken(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.archived, 'CHI Archived');
+
         ICHIVault(_chi_.vault).removeLiquidityFromPosition(
             rangeIndex,
             liquidity
@@ -310,13 +338,44 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
         isAuthorizedForToken(tokenId)
     {
         CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.archived, 'CHI Archived');
+
         ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);
+    }
+
+    function stateOfCHI(uint256 tokenId) external view override returns (bool isPaused, bool isArchived)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        isPaused = _chi_.paused;
+        isArchived = _chi_.archived;
+    }
+
+    function pausedCHI(uint256 tokenId) external override
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        require(_isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager, 'Not approved');
+        _chi_.paused = true;
+    }
+
+    function unpausedCHI(uint256 tokenId) external override
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        require(_isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager, 'Not approved');
+        require(!_chi_.archived, 'CHI archived');
+        _chi_.paused = false;
+    }
+
+    function archivedCHI(uint256 tokenId) external override isAuthorizedForToken(tokenId)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        require(_chi_.paused, 'CHI not paused');
+        _chi_.archived = true;
     }
 
     function tokenURI(uint256 tokenId)
         public
         view
-        override(ERC721)
+        override(ERC721Upgradeable)
         returns (string memory)
     {
         require(_exists(tokenId));
@@ -325,23 +384,26 @@ contract CHIManager is ICHIManager, ReentrancyGuard, ERC721, Multicall {
 
     function baseURI() public pure override returns (string memory) {}
 
-    /// @inheritdoc IERC721
+    /// @inheritdoc IERC721Upgradeable
     function getApproved(uint256 tokenId)
         public
         view
-        override(ERC721)
+        override(ERC721Upgradeable)
         returns (address)
     {
         require(
             _exists(tokenId),
-            "ERC721: approved query for nonexistent token"
+            "ERC721Upgradeable: approved query for nonexistent token"
         );
 
         return _chi[tokenId].operator;
     }
 
     /// @dev Overrides _approve to use the operator in the position, which is packed with the position permit nonce
-    function _approve(address to, uint256 tokenId) internal override(ERC721) {
+    function _approve(address to, uint256 tokenId)
+        internal
+        override(ERC721Upgradeable)
+    {
         _chi[tokenId].operator = to;
         emit Approval(ownerOf(tokenId), to, tokenId);
     }

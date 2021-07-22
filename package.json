@@ -9,13 +9,16 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prettier": "prettier --write 'contracts/**/*.sol'"
   },
   "engines": {
     "node": ">=12"
   },
   "dependencies": {
     "@openzeppelin/contracts": "3.4.1-solc-0.7-2",
+    "@openzeppelin/contracts-upgradeable": "3.4.1-solc-0.7-2",
+    "@openzeppelin/hardhat-upgrades": "^1.9.0",
     "@typechain/ethers-v5": "^7.0.1",
     "@uniswap/lib": "^4.0.1-alpha",
     "@uniswap/v2-core": "^1.0.1",
@@ -38,12 +41,12 @@
     "@types/mocha": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
-    "ethereumjs-util": "^7.0.4",
     "chai": "^4.3.4",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "ethereum-waffle": "^3.4.0",
+    "ethereumjs-util": "^7.0.4",
     "ethers": "^5.3.1",
     "hardhat": "^2.4.0",
     "hardhat-typechain": "^0.3.5",

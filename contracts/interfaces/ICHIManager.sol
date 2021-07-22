@@ -102,6 +102,11 @@ interface ICHIManager is ICHIDepositCallBack {
     function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
         external;
 
+    function stateOfCHI(uint256 tokenId) external view returns (bool isPaused, bool isArchived);
+    function pausedCHI(uint256 tokenId) external;
+    function unpausedCHI(uint256 tokenId) external;
+    function archivedCHI(uint256 tokenId) external;
+
     event Create(
         uint256 tokenId,
         address pool,

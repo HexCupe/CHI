@@ -3,6 +3,8 @@ import 'hardhat-typechain'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
+import '@openzeppelin/hardhat-upgrades';
+
 require('dotenv').config()
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -52,7 +54,7 @@ module.exports = {
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts: [`${process.env.RINKEBY_PRIVATE_KEY}`, ],
+      accounts: [`${process.env.PRIVATE_KEY}`, ],
     },
   },
   etherscan: {

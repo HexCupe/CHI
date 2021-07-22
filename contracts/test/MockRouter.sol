@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.7.6;
 
-import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
-import '@uniswap/v3-core/contracts/libraries/SafeCast.sol';
-import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
-import '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3MintCallback.sol';
-import '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol';
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@uniswap/v3-core/contracts/libraries/SafeCast.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3MintCallback.sol";
+import "@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol";
 
 contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
     using SafeCast for uint256;
@@ -17,7 +17,14 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         int24 tickUpper,
         uint128 amount
     ) external returns (uint256, uint256) {
-        return pool.mint(msg.sender, tickLower, tickUpper, amount, abi.encode(msg.sender));
+        return
+            pool.mint(
+                msg.sender,
+                tickLower,
+                tickUpper,
+                amount,
+                abi.encode(msg.sender)
+            );
     }
 
     function getSwapResult(
@@ -50,7 +57,13 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3Pool(pool).swap(recipient, true, amount0In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(
+            recipient,
+            true,
+            amount0In.toInt256(),
+            sqrtPriceLimitX96,
+            abi.encode(msg.sender)
+        );
     }
 
     function swap0ForExact1(
@@ -59,7 +72,13 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3Pool(pool).swap(recipient, true, -amount1Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(
+            recipient,
+            true,
+            -amount1Out.toInt256(),
+            sqrtPriceLimitX96,
+            abi.encode(msg.sender)
+        );
     }
 
     function swapExact1For0(
@@ -68,7 +87,13 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3Pool(pool).swap(recipient, false, amount1In.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(
+            recipient,
+            false,
+            amount1In.toInt256(),
+            sqrtPriceLimitX96,
+            abi.encode(msg.sender)
+        );
     }
 
     function swap1ForExact0(
@@ -77,7 +102,13 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         address recipient,
         uint160 sqrtPriceLimitX96
     ) external {
-        IUniswapV3Pool(pool).swap(recipient, false, -amount0Out.toInt256(), sqrtPriceLimitX96, abi.encode(msg.sender));
+        IUniswapV3Pool(pool).swap(
+            recipient,
+            false,
+            -amount0Out.toInt256(),
+            sqrtPriceLimitX96,
+            abi.encode(msg.sender)
+        );
     }
 
     function uniswapV3MintCallback(
@@ -86,8 +117,18 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         bytes calldata data
     ) external override {
         address sender = abi.decode(data, (address));
-        if (amount0Owed > 0) IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, amount0Owed);
-        if (amount1Owed > 0) IERC20(IUniswapV3Pool(msg.sender).token1()).transferFrom(sender, msg.sender, amount1Owed);
+        if (amount0Owed > 0)
+            IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(
+                sender,
+                msg.sender,
+                amount0Owed
+            );
+        if (amount1Owed > 0)
+            IERC20(IUniswapV3Pool(msg.sender).token1()).transferFrom(
+                sender,
+                msg.sender,
+                amount1Owed
+            );
     }
 
     function uniswapV3SwapCallback(
@@ -98,9 +139,17 @@ contract MockRouter is IUniswapV3MintCallback, IUniswapV3SwapCallback {
         address sender = abi.decode(data, (address));
 
         if (amount0Delta > 0) {
-            IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(amount0Delta));
+            IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(
+                sender,
+                msg.sender,
+                uint256(amount0Delta)
+            );
         } else if (amount1Delta > 0) {
-            IERC20(IUniswapV3Pool(msg.sender).token1()).transferFrom(sender, msg.sender, uint256(amount1Delta));
+            IERC20(IUniswapV3Pool(msg.sender).token1()).transferFrom(
+                sender,
+                msg.sender,
+                uint256(amount1Delta)
+            );
         } else {
             // if both are not gt 0, both must be 0.
             assert(amount0Delta == 0 && amount1Delta == 0);
