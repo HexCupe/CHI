@@ -46,6 +46,9 @@ module.exports = {
       blockGasLimit: 20000000,
       timeout: 120000,
     },
+    hardhat: {
+      url: `${process.env.TEST_API_URL}`,
+    },
     mainnet: {
       url: `${process.env.MAINNET_API_URL}`,
     },
