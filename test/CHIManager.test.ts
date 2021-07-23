@@ -295,6 +295,61 @@ describe('CHIManager', () => {
         expect(await token1.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(1).add(1))
       })
 
+      it('withdraw unused first when remove liquidity', async () => {
+        const subscribeParam0 = {
+          yangId: 1,
+          chiId: tokenId1,
+          amount0Desired: convertTo18Decimals(1000),
+          amount1Desired: convertTo18Decimals(1000),
+          amount0Min: 0,
+          amount1Min: 0,
+        }
+        await yang.subscribe(subscribeParam0)
+        expect(await token0.balanceOf(yang.address)).to.eq(convertTo18Decimals(9000))
+        expect(await token1.balanceOf(yang.address)).to.eq(convertTo18Decimals(9000))
+        // let token0 and token1 in all tick
+        // means it should be 1:1
+        await chiManager.addRange(tokenId1, minTick, maxTick)
+        await chiManager.addLiquidityToPosition(tokenId1, 0, convertTo18Decimals(1000), convertTo18Decimals(1000))
+        expect(await token0.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(1001))
+        expect(await token1.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(1001))
+
+        // big subscribe
+        const subscribeParam1 = {
+          yangId: 1,
+          chiId: tokenId1,
+          amount0Desired: convertTo18Decimals(9000),
+          amount1Desired: convertTo18Decimals(9000),
+          amount0Min: 0,
+          amount1Min: 0,
+        }
+        await yang.subscribe(subscribeParam1)
+        expect(await token0.balanceOf(yang.address)).to.eq(convertTo18Decimals(0))
+        expect(await token1.balanceOf(yang.address)).to.eq(convertTo18Decimals(0))
+        await chiManager.addLiquidityToPosition(tokenId1, 0, convertTo18Decimals(9000), convertTo18Decimals(9000))
+
+        expect(await token0.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(10001))
+        expect(await token1.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(10001))
+
+        // withdrawal 90%
+        const totalShares = await chivault.totalSupply()
+        const withdrawShares = (await yang.totallyShares()).mul(90).div(100)
+        const unsubscribeParam = {
+          yangId: 1,
+          chiId: tokenId1,
+          shares: withdrawShares,
+          amount0Min: convertTo18Decimals(9000).mul(withdrawShares).div(totalShares),
+          amount1Min: convertTo18Decimals(9000).mul(withdrawShares).div(totalShares),
+        }
+        await yang.unsubscribe(unsubscribeParam)
+
+        const [total0, total1] = await chivault.getTotalAmounts()
+        const [lquidityTotal0, lquidityTotal1] = await chivault.getTotalLiquidityAmounts()
+        // utils rate should more then 99.9%
+        expect(lquidityTotal0.mul(1e6).div(total0)).to.be.gte(99900)
+        expect(lquidityTotal1.mul(1e6).div(total1)).to.be.gte(99900)
+      })
+
       it('swap and calculate fee', async () => {
         const subscribeParam = {
           yangId: 1,

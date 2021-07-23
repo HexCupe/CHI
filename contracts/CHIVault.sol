@@ -48,6 +48,7 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
     uint256 private _accruedProtocolFees1;
     uint256 private _protocolFee;
     uint256 public FEE_BASE = 1e6;
+    uint256 public scaleRate = 1e18;
 
     // total shares
     uint256 private _totalSupply;
@@ -186,7 +187,7 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         _rangeSet.remove(_encode(tickLower, tickUpper));
     }
 
-    function getTotalAmounts()
+    function getTotalLiquidityAmounts()
         public
         view
         override
@@ -201,6 +202,15 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
             total0 = total0.add(amount0);
             total1 = total1.add(amount1);
         }
+    }
+
+    function getTotalAmounts()
+        public
+        view
+        override
+        returns (uint256 total0, uint256 total1)
+    {
+        (total0, total1) = getTotalLiquidityAmounts();
         total0 = total0.add(_balanceToken0());
         total1 = total1.add(_balanceToken1());
     }
@@ -258,32 +268,64 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         override
         nonReentrant
         onlyManager
-        returns (uint256 amount0, uint256 amount1)
+        returns (uint256 withdrawal0, uint256 withdrawal1)
     {
         require(shares > 0, "s");
         require(to != address(0) && to != address(this), "to");
 
-        (
-            uint256 removeAmount0,
-            uint256 removeAmount1
-        ) = _burnMultLiquidityShare(shares, to);
-
         // collect fee
         harvestFee();
-        uint256 unusedAmount0 = _balanceToken0().mul(shares).div(_totalSupply);
-        uint256 unusedAmount1 = _balanceToken1().mul(shares).div(_totalSupply);
-        if (unusedAmount0 > 0) token0.safeTransfer(to, unusedAmount0);
-        if (unusedAmount1 > 0) token1.safeTransfer(to, unusedAmount1);
 
-        // Sum up total amounts sent to recipient
-        amount0 = removeAmount0.add(unusedAmount0);
-        amount1 = removeAmount1.add(unusedAmount1);
-        require(amount0 >= amount0Min, "A0M");
-        require(amount1 >= amount1Min, "A1M");
+        (uint256 total0, uint256 total1) = getTotalAmounts();
+
+        withdrawal0 = total0.mul(shares).div(_totalSupply);
+        withdrawal1 = total1.mul(shares).div(_totalSupply);
+
+        require(withdrawal0 >= amount0Min, "A0M");
+        require(withdrawal1 >= amount1Min, "A1M");
+
+        uint256 balanceToken0 = _balanceToken0();
+        uint256 balanceToken1 = _balanceToken1();
+
+        if (balanceToken0 <= withdrawal0 && balanceToken1 <= withdrawal1) {
+            uint256 shouldWithdrawal0 = withdrawal0.sub(balanceToken0);
+            uint256 shouldWithdrawal1 = withdrawal1.sub(balanceToken1);
+
+            (
+                uint256 _liquidityAmount0,
+                uint256 _liquidityAmount1
+            ) = getTotalLiquidityAmounts();
+
+            uint256 shouldLiquidity = 0;
+            if (_liquidityAmount0 != 0 && _liquidityAmount1 == 0) {
+                shouldLiquidity = shouldWithdrawal0.mul(scaleRate).div(
+                    _liquidityAmount0
+                );
+            } else if (_liquidityAmount0 == 0 && _liquidityAmount1 != 0) {
+                shouldLiquidity = shouldWithdrawal1.mul(scaleRate).div(
+                    _liquidityAmount1
+                );
+            } else if (_liquidityAmount0 != 0 && _liquidityAmount1 != 0) {
+                shouldLiquidity = Math.max(
+                    shouldWithdrawal0.mul(scaleRate).div(_liquidityAmount0),
+                    shouldWithdrawal1.mul(scaleRate).div(_liquidityAmount1)
+                );
+            }
+            // avoid round down
+            shouldLiquidity = shouldLiquidity.mul(10100).div(10000);
+            if (shouldLiquidity > scaleRate) {
+                shouldLiquidity = scaleRate;
+            }
+
+            _burnMultLiquidityScale(shouldLiquidity, address(this));
+        }
+
+        if (withdrawal0 > 0) token0.safeTransfer(to, withdrawal0);
+        if (withdrawal1 > 0) token1.safeTransfer(to, withdrawal1);
 
         // Burn shares
         _burn(shares);
-        emit Withdraw(yangId, to, shares, amount0, amount1);
+        emit Withdraw(yangId, to, shares, withdrawal0, withdrawal1);
     }
 
     function uniswapV3MintCallback(
@@ -337,12 +379,12 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
                 amount0Desired.mul(total1),
                 amount1Desired.mul(total0)
             );
-            require(cross > 0, "c");
-
-            // Round up amounts
-            amount0 = cross.sub(1).div(total1).add(1);
-            amount1 = cross.sub(1).div(total0).add(1);
-            shares = cross.mul(_totalSupply).div(total0).div(total1);
+            if (cross != 0) {
+                // Round up amounts
+                amount0 = cross.sub(1).div(total1).add(1);
+                amount1 = cross.sub(1).div(total0).add(1);
+                shares = cross.mul(_totalSupply).div(total0).div(total1);
+            }
         }
     }
 
@@ -522,6 +564,22 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         );
     }
 
+    function _amountsForShares(
+        int24 tickLower,
+        int24 tickUpper,
+        uint256 shares
+    ) internal view returns (uint256 amount0, uint256 amount1) {
+        uint128 position = _positionLiquidity(tickLower, tickUpper);
+        uint128 liquidity = toUint128(
+            uint256(position).mul(shares).div(_totalSupply)
+        );
+        (amount0, amount1) = _amountsForLiquidity(
+            tickLower,
+            tickUpper,
+            liquidity
+        );
+    }
+
     function _liquidityForAmounts(
         int24 tickLower,
         int24 tickUpper,
@@ -555,17 +613,17 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         }
     }
 
-    function _burnMultLiquidityShare(uint256 shares, address to)
+    function _burnMultLiquidityScale(uint256 lqiuidityScale, address to)
         internal
         returns (uint256 total0, uint256 total1)
     {
         for (uint256 i = 0; i < _rangeSet.length(); i++) {
             (int24 _tickLower, int24 _tickUpper) = _decode(_rangeSet.at(i));
             if (_positionLiquidity(_tickLower, _tickUpper) > 0) {
-                (uint256 amount0, uint256 amount1) = _burnLiquidityShare(
+                (uint256 amount0, uint256 amount1) = _burnLiquidityScale(
                     _tickLower,
                     _tickUpper,
-                    shares,
+                    lqiuidityScale,
                     to
                 );
                 total0 = total0.add(amount0);
@@ -574,19 +632,23 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         }
     }
 
-    function _burnLiquidityShare(
+    function _burnLiquidityScale(
         int24 tickLower,
         int24 tickUpper,
-        uint256 shares,
+        uint256 lqiuidityScale,
         address to
     ) internal returns (uint256 amount0, uint256 amount1) {
         uint128 position = _positionLiquidity(tickLower, tickUpper);
-        uint128 liquidity = toUint128(
-            uint256(position).mul(shares).div(_totalSupply)
+        uint256 liquidity = uint256(position).mul(lqiuidityScale).div(
+            scaleRate
         );
 
         if (liquidity > 0) {
-            (amount0, amount1) = pool.burn(tickLower, tickUpper, liquidity);
+            (amount0, amount1) = pool.burn(
+                tickLower,
+                tickUpper,
+                toUint128(liquidity)
+            );
 
             if (amount0 > 0 || amount1 > 0) {
                 (amount0, amount1) = pool.collect(
