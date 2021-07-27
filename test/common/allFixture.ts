@@ -1,4 +1,3 @@
-import { IUniswapV3Factory } from './../../typechain/IUniswapV3Factory'
 import { Fixture } from 'ethereum-waffle'
 import { ethers, upgrades } from 'hardhat'
 import { constants, Wallet } from 'ethers'
