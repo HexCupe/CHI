@@ -7,6 +7,10 @@ interface ICHIVault {
 
     function accruedProtocolFees1() external view returns (uint256);
 
+    function accruedCollectFees0() external view returns (uint256);
+
+    function accruedCollectFees1() external view returns (uint256);
+
     function protocolFee() external view returns (uint256);
 
     // shares

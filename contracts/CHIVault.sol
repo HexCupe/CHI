@@ -55,6 +55,10 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
     using EnumerableSet for EnumerableSet.Bytes32Set;
     EnumerableSet.Bytes32Set private _rangeSet;
 
+    // vault accruedfees
+    uint256 private _accruedCollectFees0;
+    uint256 private _accruedCollectFees1;
+
     constructor(
         address _pool,
         address _manager,
@@ -95,6 +99,24 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         returns (uint256)
     {
         return _accruedProtocolFees1;
+    }
+
+    function accruedCollectFees0()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _accruedCollectFees0;
+    }
+
+    function accruedCollectFees1()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _accruedCollectFees1;
     }
 
     function protocolFee() external view virtual override returns (uint256) {
@@ -462,6 +484,9 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
             feesToProtocol1 = collect1.mul(_protocolFee).div(FEE_BASE);
             _accruedProtocolFees0 = _accruedProtocolFees0.add(feesToProtocol0);
             _accruedProtocolFees1 = _accruedProtocolFees1.add(feesToProtocol1);
+
+            _accruedCollectFees0 = _accruedCollectFees0.add(collect0.sub(feesToProtocol0));
+            _accruedCollectFees1 = _accruedCollectFees1.add(collect1.sub(feesToProtocol1));
         }
     }
 
