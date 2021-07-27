@@ -61,7 +61,8 @@ contract CHIManager is
         address _v3Factory,
         address _yangNFT,
         address _deployer,
-        bytes32 _merkleRoot
+        bytes32 _merkleRoot,
+        uint256 _vaultFee_
     ) public initializer {
         manager = msg.sender;
         v3Factory = _v3Factory;
@@ -69,6 +70,7 @@ contract CHIManager is
         deployer = _deployer;
         merkleRoot = _merkleRoot;
         _nextId = _initId;
+        _vaultFee = _vaultFee_;
         __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
     }
 
