@@ -375,7 +375,7 @@ describe('CHIManager', () => {
         expect(await token1.balanceOf(await chivault.pool())).to.eq(convertTo18Decimals(1001).add(amount1Delta))
 
         await chivault.harvestFee()
-        // v3 fee 0.3% and protocol fee 1%
+        // v3 fee 0.3% and protocol fee 7%
         expect(await chivault.accruedProtocolFees0()).be.eq(
           convertTo18Decimals(1)
             .mul(3)
