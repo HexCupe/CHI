@@ -278,11 +278,6 @@
               "internalType": "uint24",
               "name": "fee",
               "type": "uint24"
-            },
-            {
-              "internalType": "uint256",
-              "name": "vaultFee",
-              "type": "uint256"
             }
           ],
           "internalType": "struct ICHIManager.MintParams",

@@ -54,6 +54,7 @@ contract CHIManager is
     address public yangNFT;
     address public deployer;
     bytes32 public merkleRoot;
+    uint256 private _vaultFee = 7000;
 
     // initialize
     function initialize(
@@ -95,10 +96,6 @@ contract CHIManager is
         _tempChiId = 0;
     }
 
-    function updateMerkleRoot(bytes32 _merkleRoot) external onlyManager {
-        merkleRoot = _merkleRoot;
-    }
-
     function chi(uint256 tokenId)
         external
         view
@@ -129,6 +126,15 @@ contract CHIManager is
         );
     }
 
+    function updateMerkleRoot(bytes32 _merkleRoot) external onlyManager {
+        merkleRoot = _merkleRoot;
+    }
+
+    function updateVaultFee(uint256 _vaultFee_) external onlyManager
+    {
+        _vaultFee = _vaultFee_;
+    }
+
     function mint(MintParams calldata params, bytes32[] calldata merkleProof)
         external
         override
@@ -146,7 +152,7 @@ contract CHIManager is
         vault = ICHIVaultDeployer(deployer).createVault(
             uniswapPool,
             address(this),
-            params.vaultFee
+            _vaultFee
         );
         _mint(params.recipient, (tokenId = _nextId++));
 
@@ -158,7 +164,7 @@ contract CHIManager is
             archived: false
         });
 
-        emit Create(tokenId, uniswapPool, vault, params.vaultFee);
+        emit Create(tokenId, uniswapPool, vault, _vaultFee);
     }
 
     function subscribe(

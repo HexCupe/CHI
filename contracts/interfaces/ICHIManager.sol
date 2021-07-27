@@ -12,7 +12,6 @@ interface ICHIManager is ICHIDepositCallBack {
         address token0;
         address token1;
         uint24 fee;
-        uint256 vaultFee;
     }
 
     struct RangeParams {

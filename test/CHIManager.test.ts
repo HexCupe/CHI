@@ -25,7 +25,7 @@ describe('CHIManager', () => {
   let uniswapV3Factory: IUniswapV3Factory
   let router: MockRouter
 
-  const vaultFee = 1e4
+  const vaultFee = 7 * 1e4
 
   before('create fixture loader', async () => {
     loadFixture = waffle.createFixtureLoader(wallets)
@@ -41,7 +41,6 @@ describe('CHIManager', () => {
     token0: string,
     token1: string,
     fee: number,
-    vaultFee: number,
     proof: string[],
     caller: Wallet = gov,
   ): Promise<{
@@ -53,7 +52,6 @@ describe('CHIManager', () => {
       token0,
       token1,
       fee,
-      vaultFee
     }
 
     const { tokenId, vault } = await chiManager.connect(caller).callStatic.mint(mintParams, proof)
@@ -68,13 +66,13 @@ describe('CHIManager', () => {
       it('succeeds for mint', async () => {
         // non-existent v3 pool
         const proof = tree.getHexProof(gov.address)
-        await expect(mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, vaultFee, proof)).to.be.revertedWith(
+        await expect(mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, proof)).to.be.revertedWith(
           'Non-existent pool'
         )
-        // more than FEE_BASE
-        await expect(mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, 1e6, proof)).to.be.revertedWith('f')
+        //// more than FEE_BASE
+        //await expect(mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, 1e6, proof)).to.be.revertedWith('f')
 
-        const { tokenId: tokenId1 } = await mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, vaultFee, proof)
+        const { tokenId: tokenId1 } = await mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, proof)
         expect(gov.address).to.eq(await chiManager.ownerOf(tokenId1))
 
         expect(await chiManager.balanceOf(gov.address)).to.eq(1)
@@ -84,7 +82,6 @@ describe('CHIManager', () => {
           USDCAddress,
           USDTAddress,
           FeeAmount.MEDIUM,
-          vaultFee,
           proof
         )
         expect(tokenId2).to.eq(tokenId1 + 1)
@@ -105,7 +102,7 @@ describe('CHIManager', () => {
 
       it('succeeds for approve a operator', async () => {
         const proof = tree.getHexProof(gov.address);
-        const { tokenId: tokenId1 } = await mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, vaultFee, proof)
+        const { tokenId: tokenId1 } = await mint(gov.address, USDCAddress, USDTAddress, FeeAmount.MEDIUM, proof)
         expect(gov.address).to.eq(await chiManager.ownerOf(tokenId1))
 
         let chi1 = await chiManager.chi(tokenId1)
@@ -127,7 +124,7 @@ describe('CHIManager', () => {
       it('fails if minter is not a gov', async () => {
         const proof = tree.getHexProof(gov.address)
         await expect(
-          mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, vaultFee, proof, wallets[1])
+          mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, proof, wallets[1])
         ).to.be.revertedWith('gov')
       })
     })
@@ -165,7 +162,7 @@ describe('CHIManager', () => {
       await router.mint(poolAddress, minTick, maxTick, convertTo18Decimals(1))
 
       const proof = tree.getHexProof(gov.address)
-      const { tokenId, vault } = await mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, vaultFee, proof)
+      const { tokenId, vault } = await mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, proof)
       tokenId1 = tokenId
       chivault = (await ethers.getContractAt('CHIVault', vault)) as ChiVault
       // deposit to YANG
