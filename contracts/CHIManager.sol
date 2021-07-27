@@ -54,7 +54,6 @@ contract CHIManager is
     address public yangNFT;
     address public deployer;
     bytes32 public merkleRoot;
-    uint256 private _vaultFee = 7000;
 
     // initialize
     function initialize(
@@ -130,6 +129,7 @@ contract CHIManager is
         merkleRoot = _merkleRoot;
     }
 
+    uint256 private _vaultFee;
     function updateVaultFee(uint256 _vaultFee_) external onlyManager
     {
         _vaultFee = _vaultFee_;
