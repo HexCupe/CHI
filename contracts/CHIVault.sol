@@ -484,10 +484,9 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
             feesToProtocol1 = collect1.mul(_protocolFee).div(FEE_BASE);
             _accruedProtocolFees0 = _accruedProtocolFees0.add(feesToProtocol0);
             _accruedProtocolFees1 = _accruedProtocolFees1.add(feesToProtocol1);
-
-            _accruedCollectFees0 = _accruedCollectFees0.add(collect0.sub(feesToProtocol0));
-            _accruedCollectFees1 = _accruedCollectFees1.add(collect1.sub(feesToProtocol1));
         }
+        _accruedCollectFees0 = _accruedCollectFees0.add(collect0.sub(feesToProtocol0));
+        _accruedCollectFees1 = _accruedCollectFees1.add(collect1.sub(feesToProtocol1));
     }
 
     function _positionAmounts(int24 tickLower, int24 tickUpper)

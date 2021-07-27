@@ -458,7 +458,7 @@
           {
             "contract": "CHIManager",
             "label": "positions",
-            "type": "t_mapping(t_bytes32,t_struct(Info)10463_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(Info)10515_storage)",
             "src": "contracts/CHIManager.sol:38"
           },
           {
@@ -508,13 +508,13 @@
           "t_uint176": {
             "label": "uint176"
           },
-          "t_mapping(t_bytes32,t_struct(Info)10463_storage)": {
+          "t_mapping(t_bytes32,t_struct(Info)10515_storage)": {
             "label": "mapping(bytes32 => struct YANGPosition.Info)"
           },
           "t_bytes32": {
             "label": "bytes32"
           },
-          "t_struct(Info)10463_storage": {
+          "t_struct(Info)10515_storage": {
             "label": "struct YANGPosition.Info",
             "members": [
               {
