@@ -1,7 +1,7 @@
 import { BigNumber, constants, Wallet } from 'ethers'
 import { ethers, waffle } from 'hardhat'
 import { expect } from './common/expect'
-import { allFixture } from './common/allFixture'
+import { allFixture, AllFixture } from './common/allFixture'
 import { FeeAmount, TICK_SPACINGS, ZeroAddress, MaxUint128, MIN_SQRT_RATIO, MAX_SQRT_RATIO } from './common/constants'
 import { USDCAddress, USDTAddress } from './common/address'
 import { convertTo18Decimals, getMinTick, getMaxTick, getPositionKey } from './common/utilities'
@@ -24,6 +24,7 @@ describe('CHIManager', () => {
   let chiManager: CHIManager
   let uniswapV3Factory: IUniswapV3Factory
   let router: MockRouter
+  let ctx: AllFixture
 
   const vaultFee = 7 * 1e4
 
@@ -31,16 +32,15 @@ describe('CHIManager', () => {
     loadFixture = waffle.createFixtureLoader(wallets)
   })
   beforeEach('load fixture', async () => {
-    ;({
-      uniswapV3Factory,
-      token0,
-      token1,
-      token2,
-      yang,
-      chiVaultDeployer,
-      chi: chiManager,
-      router,
-    } = await loadFixture(allFixture))
+    ctx = await loadFixture(allFixture)
+    yang = ctx.yang
+    token0 = ctx.token0
+    token1 = ctx.token1
+    token2 = ctx.token2
+    chiManager = ctx.chi
+    chiVaultDeployer = ctx.chiVaultDeployer
+    router = ctx.router
+    uniswapV3Factory = ctx.uniswapV3Factory
   })
 
   async function mint(

@@ -86,7 +86,7 @@ async function routerFixture(): Promise<RouterFixture> {
   return { router }
 }
 
-type AllFixture = IUniswapV3FactoryFixture &
+export type AllFixture = IUniswapV3FactoryFixture &
   TokensFixture &
   YangFixture &
   chiVaultDeployerFixture &
