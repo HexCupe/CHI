@@ -7,7 +7,7 @@ import { USDCAddress, USDTAddress } from './common/address'
 import { convertTo18Decimals, getMinTick, getMaxTick, getPositionKey } from './common/utilities'
 import { IUniswapV3Factory } from '../typechain/IUniswapV3Factory'
 import { IUniswapV3Pool } from '../typechain/IUniswapV3Pool'
-import { MockErc20, MockYang, ChiVaultDeployer, ChiVault, ChiManager, MockRouter } from '../typechain'
+import { MockERC20, MockYANG, CHIVaultDeployer, CHIVault, CHIManager, MockRouter } from '../typechain'
 import { encodePriceSqrt } from './common/encodePriceSqrt'
 import WhiteListTree from './common/whitelist-tree'
 
@@ -18,10 +18,10 @@ describe('CHIManager', () => {
 
   let loadFixture: ReturnType<typeof waffle.createFixtureLoader>
 
-  let yang: MockYang
-  let token0: MockErc20, token1: MockErc20, token2: MockErc20
-  let chiVaultDeployer: ChiVaultDeployer
-  let chiManager: ChiManager
+  let yang: MockYANG
+  let token0: MockERC20, token1: MockERC20, token2: MockERC20
+  let chiVaultDeployer: CHIVaultDeployer
+  let chiManager: CHIManager
   let uniswapV3Factory: IUniswapV3Factory
   let router: MockRouter
 
@@ -139,7 +139,7 @@ describe('CHIManager', () => {
     const minTick = getMinTick(tickSpacing)
     const maxTick = getMaxTick(tickSpacing)
     let uniswapV3Pool: IUniswapV3Pool
-    let chivault: ChiVault
+    let chivault: CHIVault
     let tokenId1: number
     // set inital price
     // set 1:1
@@ -164,7 +164,7 @@ describe('CHIManager', () => {
       const proof = tree.getHexProof(gov.address)
       const { tokenId, vault } = await mint(gov.address, token0.address, token1.address, FeeAmount.MEDIUM, proof)
       tokenId1 = tokenId
-      chivault = (await ethers.getContractAt('CHIVault', vault)) as ChiVault
+      chivault = (await ethers.getContractAt('CHIVault', vault)) as CHIVault
       // deposit to YANG
       await token0.approve(yang.address, MaxUint128)
       await token1.approve(yang.address, MaxUint128)

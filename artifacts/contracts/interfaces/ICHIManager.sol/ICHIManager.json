@@ -118,6 +118,29 @@
         },
         {
           "internalType": "uint256",
+          "name": "amount0Total",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount1Total",
+          "type": "uint256"
+        }
+      ],
+      "name": "addLiquidityAllToPosition",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
           "name": "rangeIndex",
           "type": "uint256"
         },
@@ -156,6 +179,24 @@
         }
       ],
       "name": "addRange",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "addTickPercents",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
