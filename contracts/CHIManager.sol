@@ -414,16 +414,6 @@ contract CHIManager is
         _chi_.archived = true;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721Upgradeable)
-        returns (string memory)
-    {
-        require(_exists(tokenId));
-        return "";
-    }
-
     function addTickPercents(uint256 tokenId, uint256[] calldata percents)
         external override isAuthorizedForToken(tokenId)
     {
@@ -437,6 +427,21 @@ contract CHIManager is
         }
         require(totalPercent <= 100, 'Exceed max percent');
         _chi_.equational = false;
+    }
+
+    function setDeployer(address _deployer) external onlyManager
+    {
+        deployer = _deployer;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721Upgradeable)
+        returns (string memory)
+    {
+        require(_exists(tokenId));
+        return "";
     }
 
     function baseURI() public pure override returns (string memory) {}
