@@ -625,4 +625,10 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
     function _burn(uint256 amount) internal {
         _totalSupply -= amount;
     }
+
+    function sweep(address token, address to) external override onlyManager {
+        require(token != address(token0) && token != address(token1), "t");
+        uint256 amount = IERC20(token).balanceOf(address(this));
+        IERC20(token).safeTransfer(to, amount);
+    }
 }

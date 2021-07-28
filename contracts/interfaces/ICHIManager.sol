@@ -106,6 +106,8 @@ interface ICHIManager is ICHIDepositCallBack {
     function unpausedCHI(uint256 tokenId) external;
     function archivedCHI(uint256 tokenId) external;
 
+    function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external;
+
     event Create(
         uint256 tokenId,
         address pool,

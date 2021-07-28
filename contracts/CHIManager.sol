@@ -380,6 +380,12 @@ contract CHIManager is
         _chi_.archived = true;
     }
 
+    function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        ICHIVault(_chi_.vault).sweep(token, to);
+    }
+
     function tokenURI(uint256 tokenId)
         public
         view
