@@ -303,7 +303,7 @@ contract CHIManager is
         uint256 amount0,
         uint256 amount1,
         address to
-    ) external override isAuthorizedForToken(tokenId) {
+    ) external override onlyManager {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.paused, 'CHI Paused');
 
@@ -315,7 +315,7 @@ contract CHIManager is
         uint256 rangeIndex,
         uint256 amount0Desired,
         uint256 amount1Desired
-    ) external override isAuthorizedForToken(tokenId) {
+    ) external override onlyManager {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.paused, 'CHI Paused');
 
@@ -330,7 +330,7 @@ contract CHIManager is
         uint256 tokenId,
         uint256 rangeIndex,
         uint128 liquidity
-    ) external override isAuthorizedForToken(tokenId) {
+    ) external override onlyManager {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.archived, 'CHI Archived');
 
@@ -343,7 +343,7 @@ contract CHIManager is
     function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
         external
         override
-        isAuthorizedForToken(tokenId)
+        onlyManager
     {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.archived, 'CHI Archived');
@@ -373,7 +373,7 @@ contract CHIManager is
         _chi_.paused = false;
     }
 
-    function archivedCHI(uint256 tokenId) external override isAuthorizedForToken(tokenId)
+    function archivedCHI(uint256 tokenId) external override onlyManager
     {
         CHIData storage _chi_ = _chi[tokenId];
         require(_chi_.paused, 'CHI not paused');

@@ -172,14 +172,6 @@ describe('CHIManager', () => {
       await yang.deposit(token0.address, tokenAmount0, token1.address, tokenAmount1)
     })
     describe('success cases', () => {
-      it('set gov', async () => {
-        await chiManager.setGovernance(other.address)
-        expect(await chiManager.chigov()).to.eq(gov.address)
-        expect(await chiManager.nextgov()).to.eq(other.address)
-        await chiManager.connect(other).acceptGovernance()
-        expect(await chiManager.chigov()).to.eq(other.address)
-        expect(await chiManager.nextgov()).to.eq(ZeroAddress)
-      })
       it('add and remove range', async () => {
         await chiManager.addRange(tokenId1, minTick, maxTick)
         expect(await chivault.getRangeCount()).to.eq(1)
@@ -361,11 +353,11 @@ describe('CHIManager', () => {
           amount1Min: 0
         }
         await yang.unsubscribe(unsubscribeParam)
-        // 29970029970029 is protocol fee
+        // 209790209790209 is protocol fee
         expect(await token0.balanceOf(yang.address)).to.eq(
           tokenAmount0
             .add(amount0Delta.mul(convertTo18Decimals(1000)).div(convertTo18Decimals(1001)))
-            .sub(29970029970029)
+            .sub(209790209790209)
         )
         expect(await token1.balanceOf(yang.address)).to.eq(
           tokenAmount1.add(amount1Delta.mul(convertTo18Decimals(1000)).div(convertTo18Decimals(1001))).sub(3)

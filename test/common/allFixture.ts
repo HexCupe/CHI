@@ -1,7 +1,7 @@
 import { IUniswapV3Factory } from './../../typechain/IUniswapV3Factory'
 import { Fixture } from 'ethereum-waffle'
-import { ethers } from 'hardhat'
-import { constants, Wallet, upgrades } from 'ethers'
+import { ethers, upgrades } from 'hardhat'
+import { constants, Wallet } from 'ethers'
 import { UniswapV3FactoryAddress } from './address'
 import { MockErc20, MockYang, ChiVaultDeployer, ChiManager, MockRouter } from '../../typechain'
 import parseWhiteListMap from './parse-whitelist-map'
@@ -72,8 +72,8 @@ async function chiManagerFixture(
   const chiManagerFactory = await ethers.getContractFactory('CHIManager')
   const chi = (await upgrades.deployProxy(
       chiManagerFactory,
-      [1, uniswapV3FactoryAddress, yangAddress, vaultDeployerAddress, info.merkleRoot]
-  ))
+      [1, UniswapV3FactoryAddress, yangAddress, vaultDeployerAddress, info.merkleRoot, 70000]
+  )) as ChiManager
   //const chi = (await chiManagerFactory.deploy(
     //UniswapV3FactoryAddress,
     //yangAddress,
