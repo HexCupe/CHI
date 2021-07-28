@@ -104,8 +104,6 @@ contract CHIManager is
         _;
     }
 
-    mapping(address => mapping(uint256 => uint256)) public tickPercents;
-
     function chi(uint256 tokenId)
         external
         view
@@ -313,6 +311,9 @@ contract CHIManager is
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).collectProtocol(amount0, amount1, to);
     }
+
+    // tickPercents for rangeSets
+    mapping(address => mapping(uint256 => uint256)) public tickPercents;
 
     function addLiquidityAllToPosition(
         uint256 tokenId,
