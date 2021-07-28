@@ -1,6 +1,6 @@
 const { ethers, upgrades } = require('hardhat');
 
-const YangNFT = '0x68a0f259bd2c8faf7d515b5d03eba5c018cbc116';
+const YangNFT = '0x0de96Fc05F16105077550c26407Fb78164345851';
 const MerkleRoot = '0xdb45131226a82a3ac77bac89d823bed43d130e9cb50cd0f03c84f6d28264a78f';
 const UniV3Factory = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
 const InitId = 1;
