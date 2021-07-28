@@ -92,6 +92,14 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Desired
     ) external;
 
+    function addLiquidityAllToPosition(
+        uint256 tokenId,
+        uint256 amount0Total,
+        uint256 amount1Total
+    ) external;
+
+    function addTickPercents(uint256, uint256[] calldata) external;
+
     function removeLiquidityFromPosition(
         uint256 tokenId,
         uint256 rangeIndex,

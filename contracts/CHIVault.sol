@@ -289,7 +289,7 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
     function uniswapV3MintCallback(
         uint256 amount0Owed,
         uint256 amount1Owed,
-        bytes calldata data
+        bytes calldata
     ) external override {
         require(msg.sender == address(pool));
         if (amount0Owed > 0) token0.safeTransfer(msg.sender, amount0Owed);
