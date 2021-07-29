@@ -1,4 +1,5 @@
 import { task } from 'hardhat/config'
+import 'hardhat-abi-exporter';
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'

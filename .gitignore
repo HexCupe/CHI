@@ -3,4 +3,4 @@ cache/
 typechain/
 .env
 .vscode/settings.json
-
+artifacts/
