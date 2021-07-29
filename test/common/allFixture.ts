@@ -1,9 +1,8 @@
-import { IUniswapV3Factory } from './../../typechain/IUniswapV3Factory'
 import { Fixture } from 'ethereum-waffle'
-import { ethers } from 'hardhat'
-import { constants, Wallet, upgrades } from 'ethers'
+import { ethers, upgrades } from 'hardhat'
+import { constants, Wallet } from 'ethers'
 import { UniswapV3FactoryAddress } from './address'
-import { MockErc20, MockYang, ChiVaultDeployer, ChiManager, MockRouter } from '../../typechain'
+import { MockERC20, MockYANG, CHIVaultDeployer, CHIManager, MockRouter, IUniswapV3Factory } from '../../typechain'
 import parseWhiteListMap from './parse-whitelist-map'
 
 interface IUniswapV3FactoryFixture {
@@ -19,9 +18,9 @@ async function uniswapVfactoryFixture(): Promise<IUniswapV3FactoryFixture> {
 }
 
 interface TokensFixture {
-  token0: MockErc20
-  token1: MockErc20
-  token2: MockErc20
+  token0: MockERC20
+  token1: MockERC20
+  token2: MockERC20
 }
 
 async function tokensFixture(): Promise<TokensFixture> {
@@ -30,7 +29,7 @@ async function tokensFixture(): Promise<TokensFixture> {
     tokenFactory.deploy(constants.MaxUint256.div(2)),
     tokenFactory.deploy(constants.MaxUint256.div(2)),
     tokenFactory.deploy(constants.MaxUint256.div(2)),
-  ])) as [MockErc20, MockErc20, MockErc20]
+  ])) as [MockERC20, MockERC20, MockERC20]
 
   const [token0, token1, token2] = tokens.sort((tokenA, tokenB) =>
     tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? -1 : 1
@@ -40,27 +39,27 @@ async function tokensFixture(): Promise<TokensFixture> {
 }
 
 interface YangFixture {
-  yang: MockYang
+  yang: MockYANG
 }
 
 async function yangFixture(): Promise<YangFixture> {
-  const mockYANGFactory = await ethers.getContractFactory('MockYANG')
-  const yang = (await mockYANGFactory.deploy()) as MockYang
+  const MockYANGFactory = await ethers.getContractFactory('MockYANG')
+  const yang = (await MockYANGFactory.deploy()) as MockYANG
   return { yang }
 }
 
 interface chiVaultDeployerFixture {
-  chiVaultDeployer: ChiVaultDeployer
+  chiVaultDeployer: CHIVaultDeployer
 }
 
 async function chiVaultDeployerFixture(): Promise<chiVaultDeployerFixture> {
   const chiVaultDeployerFactory = await ethers.getContractFactory('CHIVaultDeployer')
-  const chiVaultDeployer = (await chiVaultDeployerFactory.deploy()) as ChiVaultDeployer
+  const chiVaultDeployer = (await chiVaultDeployerFactory.deploy()) as CHIVaultDeployer
   return { chiVaultDeployer }
 }
 
 interface ChiManagerFixture {
-  chi: ChiManager
+  chi: CHIManager
 }
 
 async function chiManagerFixture(
@@ -72,15 +71,8 @@ async function chiManagerFixture(
   const chiManagerFactory = await ethers.getContractFactory('CHIManager')
   const chi = (await upgrades.deployProxy(
       chiManagerFactory,
-      [1, uniswapV3FactoryAddress, yangAddress, vaultDeployerAddress, info.merkleRoot]
-  ))
-  //const chi = (await chiManagerFactory.deploy(
-    //UniswapV3FactoryAddress,
-    //yangAddress,
-    //vaultDeployerAddress,
-    //// default wallet0 is gov
-    //info.merkleRoot
-  //)) as ChiManager
+      [1, UniswapV3FactoryAddress, yangAddress, vaultDeployerAddress, info.merkleRoot, 70000]
+  )) as CHIManager
   return { chi }
 }
 
@@ -94,7 +86,7 @@ async function routerFixture(): Promise<RouterFixture> {
   return { router }
 }
 
-type AllFixture = IUniswapV3FactoryFixture &
+export type AllFixture = IUniswapV3FactoryFixture &
   TokensFixture &
   YangFixture &
   chiVaultDeployerFixture &

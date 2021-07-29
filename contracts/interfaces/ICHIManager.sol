@@ -92,6 +92,14 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Desired
     ) external;
 
+    function addLiquidityAllToPosition(
+        uint256 tokenId,
+        uint256 amount0Total,
+        uint256 amount1Total
+    ) external;
+
+    function addTickPercents(uint256, uint256[] calldata) external;
+
     function removeLiquidityFromPosition(
         uint256 tokenId,
         uint256 rangeIndex,
@@ -101,9 +109,15 @@ interface ICHIManager is ICHIDepositCallBack {
     function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
         external;
 
-    function stateOfCHI(uint256 tokenId) external view returns (bool isPaused, bool isArchived);
+    function stateOfCHI(uint256 tokenId)
+        external
+        view
+        returns (bool isPaused, bool isArchived);
+
     function pausedCHI(uint256 tokenId) external;
+
     function unpausedCHI(uint256 tokenId) external;
+
     function archivedCHI(uint256 tokenId) external;
 
     function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external;

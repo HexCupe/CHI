@@ -1,5 +1,5 @@
 import { task } from 'hardhat/config'
-import 'hardhat-typechain'
+import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
@@ -39,12 +39,15 @@ const DEFAULT_COMPILER_SETTINGS = {
 module.exports = {
   networks: {
     hardhat: {
-      //forking: {
-        //url: `${process.env.MAINNET_API_URL}`,
-      //},
+      forking: {
+        url: `${process.env.MAINNET_API_URL}`,
+      },
       allowUnlimitedContractSize: false,
       blockGasLimit: 20000000,
       timeout: 120000,
+    },
+    test: {
+      url: `${process.env.TEST_API_URL}`,
     },
     mainnet: {
       url: `${process.env.MAINNET_API_URL}`,
