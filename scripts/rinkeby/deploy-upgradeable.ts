@@ -1,7 +1,7 @@
 const { ethers, upgrades } = require('hardhat');
 
 const YangNFT = '0x24998A77e60660757B353fEA0A5F39C21a027c9B';
-const MerkleRoot = '0xdb45131226a82a3ac77bac89d823bed43d130e9cb50cd0f03c84f6d28264a78f';
+const MerkleRoot = '0x7d98606d32130231b9ea8cafe1942ac1f8e63d4a5793359ad44a1ffe695435a3';
 const UniV3Factory = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
 const InitId = 1;
 const VaultFee = 70000;
