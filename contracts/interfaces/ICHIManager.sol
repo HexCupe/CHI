@@ -134,6 +134,8 @@ interface ICHIManager is ICHIDepositCallBack {
         bytes32[] calldata merkleProof
     ) external;
 
+    function yang(bytes32 key) external view returns (uint256 shares);
+
     event Create(
         uint256 tokenId,
         address pool,

@@ -146,6 +146,12 @@ contract CHIManager is
         );
     }
 
+    function yang(bytes32 key) external override view returns (uint256 shares)
+    {
+        YANGPosition.Info memory _position = positions[key];
+        shares = _position.shares;
+    }
+
     function stateOfCHI(uint256 tokenId)
         external
         view
