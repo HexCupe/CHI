@@ -434,6 +434,17 @@ contract CHIManager is
         _chi_.archived = true;
     }
 
+
+    function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        ICHIVault(_chi_.vault).sweep(token, to);
+    }
+
+    function emergencyBurn(uint256 tokenId, int24 tickLower, int24 tickUpper, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof) {
+        CHIData storage _chi_ = _chi[tokenId];
+        ICHIVault(_chi_.vault).emergencyBurn(tickLower, tickUpper);
+
     function addTickPercents(uint256 tokenId, uint256[] calldata percents)
         external
         override
@@ -453,6 +464,7 @@ contract CHIManager is
 
     function setDeployer(address _deployer) external onlyManager {
         deployer = _deployer;
+
     }
 
     function tokenURI(uint256 tokenId)
