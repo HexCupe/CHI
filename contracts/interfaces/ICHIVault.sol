@@ -28,6 +28,11 @@ interface ICHIVault {
 
     function removeRange(int24 _tickLower, int24 _tickUpper) external;
 
+    function getTotalLiquidityAmounts()
+        external
+        view
+        returns (uint256 amount0, uint256 amount1);
+
     function getTotalAmounts()
         external
         view

@@ -1,9 +1,8 @@
-import { IUniswapV3Factory } from './../../typechain/IUniswapV3Factory'
 import { Fixture } from 'ethereum-waffle'
 import { ethers, upgrades } from 'hardhat'
 import { constants, Wallet } from 'ethers'
 import { UniswapV3FactoryAddress } from './address'
-import { MockERC20, MockYANG, CHIVaultDeployer, CHIManager, MockRouter } from '../../typechain'
+import { MockERC20, MockYANG, CHIVaultDeployer, CHIManager, MockRouter, IUniswapV3Factory } from '../../typechain'
 import parseWhiteListMap from './parse-whitelist-map'
 
 interface IUniswapV3FactoryFixture {
@@ -87,7 +86,7 @@ async function routerFixture(): Promise<RouterFixture> {
   return { router }
 }
 
-type AllFixture = IUniswapV3FactoryFixture &
+export type AllFixture = IUniswapV3FactoryFixture &
   TokensFixture &
   YangFixture &
   chiVaultDeployerFixture &
