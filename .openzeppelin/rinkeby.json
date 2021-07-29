@@ -347,7 +347,6 @@
           }
         }
       }
-<<<<<<< HEAD
     },
     "d535a51e29459d64c6fba6b915f4396b53a4026a274a00973ef676026c824489": {
       "address": "0xa07ab63071Ac1C6d3dd40Ef21f9221f1D0062Cc1",
@@ -880,6 +879,1014 @@
           },
           "t_bool": {
             "label": "bool"
+          },
+          "t_mapping(t_address,t_struct(UintSet)2919_storage)": {
+            "label": "mapping(address => struct EnumerableSetUpgradeable.UintSet)"
+          },
+          "t_struct(UintSet)2919_storage": {
+            "label": "struct EnumerableSetUpgradeable.UintSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)2533_storage"
+              }
+            ]
+          },
+          "t_struct(Set)2533_storage": {
+            "label": "struct EnumerableSetUpgradeable.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_struct(UintToAddressMap)2296_storage": {
+            "label": "struct EnumerableMapUpgradeable.UintToAddressMap",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Map)1978_storage"
+              }
+            ]
+          },
+          "t_struct(Map)1978_storage": {
+            "label": "struct EnumerableMapUpgradeable.Map",
+            "members": [
+              {
+                "label": "_entries",
+                "type": "t_array(t_struct(MapEntry)1970_storage)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_struct(MapEntry)1970_storage)dyn_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry[]"
+          },
+          "t_struct(MapEntry)1970_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry",
+            "members": [
+              {
+                "label": "_key",
+                "type": "t_bytes32"
+              },
+              {
+                "label": "_value",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)"
+          },
+          "t_array(t_uint256)41_storage": {
+            "label": "uint256[41]"
+          },
+          "t_mapping(t_bytes4,t_bool)": {
+            "label": "mapping(bytes4 => bool)"
+          },
+          "t_bytes4": {
+            "label": "bytes4"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "8e84c2ecb105cccf50245aa4ecbdd9786d50f39fc49007962b78eafc895518b1": {
+      "address": "0x2C8568621BBD4Ced0C360B07467cf57eBF6280f2",
+      "txHash": "0xdb9e2ccd7f362fad964f3bd93aeefb6fa7519a7c39fc099920bb26f5e34943aa",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "_supportedInterfaces",
+            "type": "t_mapping(t_bytes4,t_bool)",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:23"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:59"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_holderTokens",
+            "type": "t_mapping(t_address,t_struct(UintSet)2919_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenOwners",
+            "type": "t_struct(UintToAddressMap)2296_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:37"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenApprovals",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:40"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_operatorApprovals",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:43"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_name",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:46"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_symbol",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:49"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenURIs",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:52"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_baseURI",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:55"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)41_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:485"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_nextId",
+            "type": "t_uint176",
+            "src": "contracts/CHIManager.sol:35"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "positions",
+            "type": "t_mapping(t_bytes32,t_struct(Info)10773_storage)",
+            "src": "contracts/CHIManager.sol:38"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_chi",
+            "type": "t_mapping(t_uint256,t_struct(CHIData)7132_storage)",
+            "src": "contracts/CHIManager.sol:51"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "manager",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:53"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "v3Factory",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:54"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "yangNFT",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:55"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "deployer",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:56"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "merkleRoot",
+            "type": "t_bytes32",
+            "src": "contracts/CHIManager.sol:57"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_tempChiId",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:94"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_vaultFee",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:141"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "tickPercents",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/CHIManager.sol:316"
+          }
+        ],
+        "types": {
+          "t_uint176": {
+            "label": "uint176"
+          },
+          "t_mapping(t_bytes32,t_struct(Info)10773_storage)": {
+            "label": "mapping(bytes32 => struct YANGPosition.Info)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(Info)10773_storage": {
+            "label": "struct YANGPosition.Info",
+            "members": [
+              {
+                "label": "shares",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_struct(CHIData)7132_storage)": {
+            "label": "mapping(uint256 => struct CHIManager.CHIData)"
+          },
+          "t_struct(CHIData)7132_storage": {
+            "label": "struct CHIManager.CHIData",
+            "members": [
+              {
+                "label": "operator",
+                "type": "t_address"
+              },
+              {
+                "label": "pool",
+                "type": "t_address"
+              },
+              {
+                "label": "vault",
+                "type": "t_address"
+              },
+              {
+                "label": "paused",
+                "type": "t_bool"
+              },
+              {
+                "label": "archived",
+                "type": "t_bool"
+              },
+              {
+                "label": "equational",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_mapping(t_address,t_struct(UintSet)2919_storage)": {
+            "label": "mapping(address => struct EnumerableSetUpgradeable.UintSet)"
+          },
+          "t_struct(UintSet)2919_storage": {
+            "label": "struct EnumerableSetUpgradeable.UintSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)2533_storage"
+              }
+            ]
+          },
+          "t_struct(Set)2533_storage": {
+            "label": "struct EnumerableSetUpgradeable.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_struct(UintToAddressMap)2296_storage": {
+            "label": "struct EnumerableMapUpgradeable.UintToAddressMap",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Map)1978_storage"
+              }
+            ]
+          },
+          "t_struct(Map)1978_storage": {
+            "label": "struct EnumerableMapUpgradeable.Map",
+            "members": [
+              {
+                "label": "_entries",
+                "type": "t_array(t_struct(MapEntry)1970_storage)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_struct(MapEntry)1970_storage)dyn_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry[]"
+          },
+          "t_struct(MapEntry)1970_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry",
+            "members": [
+              {
+                "label": "_key",
+                "type": "t_bytes32"
+              },
+              {
+                "label": "_value",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)"
+          },
+          "t_array(t_uint256)41_storage": {
+            "label": "uint256[41]"
+          },
+          "t_mapping(t_bytes4,t_bool)": {
+            "label": "mapping(bytes4 => bool)"
+          },
+          "t_bytes4": {
+            "label": "bytes4"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "6c6a24dafac2ebd80a96e9ecde82fab98cfa61a91433f112c5fd6db63626baf8": {
+      "address": "0x380F138B24191418bd782013d53636dC2ab3DEF7",
+      "txHash": "0x76caf0c86f905289e8ce0340edbf2fcde76f0c16823c4f4a6cff9f9d5a2475f5",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "_supportedInterfaces",
+            "type": "t_mapping(t_bytes4,t_bool)",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:23"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:59"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_holderTokens",
+            "type": "t_mapping(t_address,t_struct(UintSet)2919_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenOwners",
+            "type": "t_struct(UintToAddressMap)2296_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:37"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenApprovals",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:40"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_operatorApprovals",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:43"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_name",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:46"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_symbol",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:49"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenURIs",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:52"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_baseURI",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:55"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)41_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:485"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_nextId",
+            "type": "t_uint176",
+            "src": "contracts/CHIManager.sol:35"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "positions",
+            "type": "t_mapping(t_bytes32,t_struct(Info)10785_storage)",
+            "src": "contracts/CHIManager.sol:38"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_chi",
+            "type": "t_mapping(t_uint256,t_struct(CHIData)7132_storage)",
+            "src": "contracts/CHIManager.sol:51"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "manager",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:53"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "v3Factory",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:54"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "yangNFT",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:55"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "deployer",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:56"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "merkleRoot",
+            "type": "t_bytes32",
+            "src": "contracts/CHIManager.sol:57"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_tempChiId",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:94"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_vaultFee",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:145"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "tickPercents",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/CHIManager.sol:320"
+          }
+        ],
+        "types": {
+          "t_uint176": {
+            "label": "uint176"
+          },
+          "t_mapping(t_bytes32,t_struct(Info)10785_storage)": {
+            "label": "mapping(bytes32 => struct YANGPosition.Info)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(Info)10785_storage": {
+            "label": "struct YANGPosition.Info",
+            "members": [
+              {
+                "label": "shares",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_struct(CHIData)7132_storage)": {
+            "label": "mapping(uint256 => struct CHIManager.CHIData)"
+          },
+          "t_struct(CHIData)7132_storage": {
+            "label": "struct CHIManager.CHIData",
+            "members": [
+              {
+                "label": "operator",
+                "type": "t_address"
+              },
+              {
+                "label": "pool",
+                "type": "t_address"
+              },
+              {
+                "label": "vault",
+                "type": "t_address"
+              },
+              {
+                "label": "paused",
+                "type": "t_bool"
+              },
+              {
+                "label": "archived",
+                "type": "t_bool"
+              },
+              {
+                "label": "equational",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_mapping(t_address,t_struct(UintSet)2919_storage)": {
+            "label": "mapping(address => struct EnumerableSetUpgradeable.UintSet)"
+          },
+          "t_struct(UintSet)2919_storage": {
+            "label": "struct EnumerableSetUpgradeable.UintSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)2533_storage"
+              }
+            ]
+          },
+          "t_struct(Set)2533_storage": {
+            "label": "struct EnumerableSetUpgradeable.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_struct(UintToAddressMap)2296_storage": {
+            "label": "struct EnumerableMapUpgradeable.UintToAddressMap",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Map)1978_storage"
+              }
+            ]
+          },
+          "t_struct(Map)1978_storage": {
+            "label": "struct EnumerableMapUpgradeable.Map",
+            "members": [
+              {
+                "label": "_entries",
+                "type": "t_array(t_struct(MapEntry)1970_storage)dyn_storage"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)"
+              }
+            ]
+          },
+          "t_array(t_struct(MapEntry)1970_storage)dyn_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry[]"
+          },
+          "t_struct(MapEntry)1970_storage": {
+            "label": "struct EnumerableMapUpgradeable.MapEntry",
+            "members": [
+              {
+                "label": "_key",
+                "type": "t_bytes32"
+              },
+              {
+                "label": "_value",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)"
+          },
+          "t_array(t_uint256)41_storage": {
+            "label": "uint256[41]"
+          },
+          "t_mapping(t_bytes4,t_bool)": {
+            "label": "mapping(bytes4 => bool)"
+          },
+          "t_bytes4": {
+            "label": "bytes4"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "7dd2804665a1b55c6e598963dce5b93937acbbc9a22f82535b60b4df6c99102f": {
+      "address": "0x3ecb1545ED86bAC638048B7EcEEc4C5380d7be29",
+      "txHash": "0x68997398eee946569d70895a8c7c7a0a8c9d7b53662a2cc22ec2f549e2839d6e",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "_supportedInterfaces",
+            "type": "t_mapping(t_bytes4,t_bool)",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:23"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/introspection/ERC165Upgradeable.sol:59"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_holderTokens",
+            "type": "t_mapping(t_address,t_struct(UintSet)2919_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenOwners",
+            "type": "t_struct(UintToAddressMap)2296_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:37"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenApprovals",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:40"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_operatorApprovals",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:43"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_name",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:46"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_symbol",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:49"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_tokenURIs",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:52"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "_baseURI",
+            "type": "t_string_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:55"
+          },
+          {
+            "contract": "ERC721Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)41_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:485"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_nextId",
+            "type": "t_uint176",
+            "src": "contracts/CHIManager.sol:35"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "positions",
+            "type": "t_mapping(t_bytes32,t_struct(Info)10785_storage)",
+            "src": "contracts/CHIManager.sol:38"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_chi",
+            "type": "t_mapping(t_uint256,t_struct(CHIData)7132_storage)",
+            "src": "contracts/CHIManager.sol:51"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "manager",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:53"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "v3Factory",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:54"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "yangNFT",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:55"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "deployer",
+            "type": "t_address",
+            "src": "contracts/CHIManager.sol:56"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "merkleRoot",
+            "type": "t_bytes32",
+            "src": "contracts/CHIManager.sol:57"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_tempChiId",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:94"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "_vaultFee",
+            "type": "t_uint256",
+            "src": "contracts/CHIManager.sol:141"
+          },
+          {
+            "contract": "CHIManager",
+            "label": "tickPercents",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/CHIManager.sol:316"
+          }
+        ],
+        "types": {
+          "t_uint176": {
+            "label": "uint176"
+          },
+          "t_mapping(t_bytes32,t_struct(Info)10785_storage)": {
+            "label": "mapping(bytes32 => struct YANGPosition.Info)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(Info)10785_storage": {
+            "label": "struct YANGPosition.Info",
+            "members": [
+              {
+                "label": "shares",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_struct(CHIData)7132_storage)": {
+            "label": "mapping(uint256 => struct CHIManager.CHIData)"
+          },
+          "t_struct(CHIData)7132_storage": {
+            "label": "struct CHIManager.CHIData",
+            "members": [
+              {
+                "label": "operator",
+                "type": "t_address"
+              },
+              {
+                "label": "pool",
+                "type": "t_address"
+              },
+              {
+                "label": "vault",
+                "type": "t_address"
+              },
+              {
+                "label": "paused",
+                "type": "t_bool"
+              },
+              {
+                "label": "archived",
+                "type": "t_bool"
+              },
+              {
+                "label": "equational",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
           },
           "t_mapping(t_address,t_struct(UintSet)2919_storage)": {
             "label": "mapping(address => struct EnumerableSetUpgradeable.UintSet)"
