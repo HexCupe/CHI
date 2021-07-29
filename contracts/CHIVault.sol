@@ -77,7 +77,7 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         require(_protocolFee < FEE_BASE, "f");
     }
 
-    modifier onlyManager {
+    modifier onlyManager() {
         require(msg.sender == address(CHIManager), "m");
         _;
     }
@@ -102,21 +102,11 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         return _accruedProtocolFees1;
     }
 
-    function accruedCollectFees0()
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function accruedCollectFees0() external view override returns (uint256) {
         return _accruedCollectFees0;
     }
 
-    function accruedCollectFees1()
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function accruedCollectFees1() external view override returns (uint256) {
         return _accruedCollectFees1;
     }
 
@@ -527,8 +517,12 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
             _accruedProtocolFees0 = _accruedProtocolFees0.add(feesToProtocol0);
             _accruedProtocolFees1 = _accruedProtocolFees1.add(feesToProtocol1);
         }
-        _accruedCollectFees0 = _accruedCollectFees0.add(collect0.sub(feesToProtocol0));
-        _accruedCollectFees1 = _accruedCollectFees1.add(collect1.sub(feesToProtocol1));
+        _accruedCollectFees0 = _accruedCollectFees0.add(
+            collect0.sub(feesToProtocol0)
+        );
+        _accruedCollectFees1 = _accruedCollectFees1.add(
+            collect1.sub(feesToProtocol1)
+        );
     }
 
     function _positionAmounts(int24 tickLower, int24 tickUpper)
@@ -540,7 +534,7 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
             abi.encodePacked(address(this), tickLower, tickUpper)
         );
         (uint128 liquidity, , , uint128 tokensOwed0, uint128 tokensOwed1) = pool
-        .positions(positionKey);
+            .positions(positionKey);
         (amount0, amount1) = _amountsForLiquidity(
             tickLower,
             tickUpper,

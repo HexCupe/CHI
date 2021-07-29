@@ -75,12 +75,12 @@ contract CHIManager is
         __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
     }
 
-    modifier onlyYANG {
+    modifier onlyYANG() {
         require(msg.sender == address(yangNFT), "y");
         _;
     }
 
-    modifier onlyManager {
+    modifier onlyManager() {
         require(msg.sender == manager, "manager");
         _;
     }
@@ -100,7 +100,7 @@ contract CHIManager is
 
     modifier onlyWhenNotPaused(uint256 tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
-        require(!_chi_.paused, 'CHI Paused');
+        require(!_chi_.paused, "CHI Paused");
         _;
     }
 
@@ -139,8 +139,8 @@ contract CHIManager is
     }
 
     uint256 private _vaultFee;
-    function updateVaultFee(uint256 _vaultFee_) external onlyManager
-    {
+
+    function updateVaultFee(uint256 _vaultFee_) external onlyManager {
         _vaultFee = _vaultFee_;
     }
 
@@ -225,7 +225,7 @@ contract CHIManager is
         returns (uint256 amount0, uint256 amount1)
     {
         CHIData storage _chi_ = _chi[tokenId];
-        require(!_chi_.archived, 'CHI Archived');
+        require(!_chi_.archived, "CHI Archived");
 
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         YANGPosition.Info storage _position = positions[positionKey];
@@ -265,7 +265,12 @@ contract CHIManager is
         uint256 tokenId,
         int24 tickLower,
         int24 tickUpper
-    ) external override isAuthorizedForToken(tokenId) onlyWhenNotPaused(tokenId) {
+    )
+        external
+        override
+        isAuthorizedForToken(tokenId)
+        onlyWhenNotPaused(tokenId)
+    {
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).addRange(tickLower, tickUpper);
         _chi_.equational = true;
@@ -275,7 +280,12 @@ contract CHIManager is
         uint256 tokenId,
         int24 tickLower,
         int24 tickUpper
-    ) external override isAuthorizedForToken(tokenId) onlyWhenNotPaused(tokenId) {
+    )
+        external
+        override
+        isAuthorizedForToken(tokenId)
+        onlyWhenNotPaused(tokenId)
+    {
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).removeRange(tickLower, tickUpper);
         _chi_.equational = true;
@@ -285,7 +295,12 @@ contract CHIManager is
         uint256 tokenId,
         RangeParams[] calldata addRanges,
         RangeParams[] calldata removeRanges
-    ) external override isAuthorizedForToken(tokenId) onlyWhenNotPaused(tokenId) {
+    )
+        external
+        override
+        isAuthorizedForToken(tokenId)
+        onlyWhenNotPaused(tokenId)
+    {
         CHIData storage _chi_ = _chi[tokenId];
         for (uint256 i = 0; i < addRanges.length; i++) {
             ICHIVault(_chi_.vault).addRange(
@@ -319,8 +334,7 @@ contract CHIManager is
         uint256 tokenId,
         uint256 amount0Total,
         uint256 amount1Total
-    ) external override onlyManager onlyWhenNotPaused(tokenId)
-    {
+    ) external override onlyManager onlyWhenNotPaused(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
         uint256 count = ICHIVault(_chi_.vault).getRangeCount();
         if (_chi_.equational) {
@@ -367,7 +381,7 @@ contract CHIManager is
         uint128 liquidity
     ) external override onlyManager {
         CHIData storage _chi_ = _chi[tokenId];
-        require(!_chi_.archived, 'CHI Archived');
+        require(!_chi_.archived, "CHI Archived");
         ICHIVault(_chi_.vault).removeLiquidityFromPosition(
             rangeIndex,
             liquidity
@@ -380,57 +394,64 @@ contract CHIManager is
         onlyManager
     {
         CHIData storage _chi_ = _chi[tokenId];
-        require(!_chi_.archived, 'CHI Archived');
+        require(!_chi_.archived, "CHI Archived");
         ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);
     }
 
-    function stateOfCHI(uint256 tokenId) external view override returns (bool isPaused, bool isArchived)
+    function stateOfCHI(uint256 tokenId)
+        external
+        view
+        override
+        returns (bool isPaused, bool isArchived)
     {
         CHIData storage _chi_ = _chi[tokenId];
         isPaused = _chi_.paused;
         isArchived = _chi_.archived;
     }
 
-    function pausedCHI(uint256 tokenId) external override
-    {
+    function pausedCHI(uint256 tokenId) external override {
         CHIData storage _chi_ = _chi[tokenId];
-        require(_isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager, 'Not approved');
+        require(
+            _isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager,
+            "Not approved"
+        );
         _chi_.paused = true;
     }
 
-    function unpausedCHI(uint256 tokenId) external override
-    {
+    function unpausedCHI(uint256 tokenId) external override {
         CHIData storage _chi_ = _chi[tokenId];
-        require(_isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager, 'Not approved');
-        require(!_chi_.archived, 'CHI archived');
+        require(
+            _isApprovedOrOwner(msg.sender, tokenId) || msg.sender == manager,
+            "Not approved"
+        );
+        require(!_chi_.archived, "CHI archived");
         _chi_.paused = false;
     }
 
-    function archivedCHI(uint256 tokenId)
-        external override onlyManager
-    {
+    function archivedCHI(uint256 tokenId) external override onlyManager {
         CHIData storage _chi_ = _chi[tokenId];
-        require(_chi_.paused, 'Not Paused');
+        require(_chi_.paused, "Not Paused");
         _chi_.archived = true;
     }
 
     function addTickPercents(uint256 tokenId, uint256[] calldata percents)
-        external override isAuthorizedForToken(tokenId)
+        external
+        override
+        isAuthorizedForToken(tokenId)
     {
         CHIData storage _chi_ = _chi[tokenId];
         uint256 rangeCount = ICHIVault(_chi_.vault).getRangeCount();
-        require(rangeCount == percents.length, 'Invalid percents');
+        require(rangeCount == percents.length, "Invalid percents");
         uint256 totalPercent = 0;
         for (uint256 idx = 0; idx < rangeCount; idx++) {
             tickPercents[_chi_.vault][idx] = percents[idx];
             totalPercent = totalPercent.add(percents[idx]);
         }
-        require(totalPercent <= 100, 'Exceed max percent');
+        require(totalPercent <= 100, "Exceed max percent");
         _chi_.equational = false;
     }
 
-    function setDeployer(address _deployer) external onlyManager
-    {
+    function setDeployer(address _deployer) external onlyManager {
         deployer = _deployer;
     }
 
