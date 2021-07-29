@@ -55,24 +55,16 @@ contract CHIManager is
     address public yangNFT;
     address public deployer;
     bytes32 public merkleRoot;
+    uint256 public vaultFee;
 
-    // initialize
-    function initialize(
-        uint176 _initId,
-        address _v3Factory,
-        address _yangNFT,
-        address _deployer,
-        bytes32 _merkleRoot,
-        uint256 _vaultFee_
-    ) public initializer {
-        manager = msg.sender;
-        v3Factory = _v3Factory;
-        yangNFT = _yangNFT;
-        deployer = _deployer;
-        merkleRoot = _merkleRoot;
-        _nextId = _initId;
-        _vaultFee = _vaultFee_;
-        __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
+    // tickPercents for rangeSets
+    mapping(address => mapping(uint256 => uint256)) public tickPercents;
+
+    uint256 private _tempChiId;
+    modifier subscripting(uint256 chiId) {
+        _tempChiId = chiId;
+        _;
+        _tempChiId = 0;
     }
 
     modifier onlyYANG() {
@@ -91,18 +83,38 @@ contract CHIManager is
         _;
     }
 
-    uint256 private _tempChiId;
-    modifier subscripting(uint256 chiId) {
-        _tempChiId = chiId;
-        _;
-        _tempChiId = 0;
-    }
-
     modifier onlyWhenNotPaused(uint256 tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.paused, "CHI Paused");
         _;
     }
+
+    modifier isAuthorizedForToken(uint256 tokenId) {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Not approved");
+        _;
+    }
+
+    // initialize
+    function initialize(
+        bytes32 _merkleRoot,
+        uint176 _initId,
+        uint256 _vaultFee,
+        address _v3Factory,
+        address _yangNFT,
+        address _deployer,
+        address _manager
+    ) public initializer {
+        manager = _manager;
+        v3Factory = _v3Factory;
+        yangNFT = _yangNFT;
+        deployer = _deployer;
+        merkleRoot = _merkleRoot;
+        _nextId = _initId;
+        vaultFee = _vaultFee;
+        __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
+    }
+
+    // VIEW
 
     function chi(uint256 tokenId)
         external
@@ -134,15 +146,29 @@ contract CHIManager is
         );
     }
 
+    function stateOfCHI(uint256 tokenId)
+        external
+        view
+        override
+        returns (bool isPaused, bool isArchived)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        isPaused = _chi_.paused;
+        isArchived = _chi_.archived;
+    }
+
+    // UTILITIES
+
     function updateMerkleRoot(bytes32 _merkleRoot) external onlyManager {
         merkleRoot = _merkleRoot;
     }
 
-    uint256 private _vaultFee;
 
-    function updateVaultFee(uint256 _vaultFee_) external onlyManager {
-        _vaultFee = _vaultFee_;
+    function updateVaultFee(uint256 _vaultFee) external onlyManager {
+        vaultFee = _vaultFee;
     }
+
+    // CHI OPERATIONS
 
     function mint(MintParams calldata params, bytes32[] calldata merkleProof)
         external
@@ -161,7 +187,7 @@ contract CHIManager is
         vault = ICHIVaultDeployer(deployer).createVault(
             uniswapPool,
             address(this),
-            _vaultFee
+            vaultFee
         );
         _mint(params.recipient, (tokenId = _nextId++));
 
@@ -174,7 +200,7 @@ contract CHIManager is
             equational: true
         });
 
-        emit Create(tokenId, uniswapPool, vault, _vaultFee);
+        emit Create(tokenId, uniswapPool, vault, vaultFee);
     }
 
     function subscribe(
@@ -240,6 +266,13 @@ contract CHIManager is
         _position.shares = positions[positionKey].shares.sub(shares);
     }
 
+    // CALLBACK
+
+    function _verifyCallback(address caller) internal view {
+        CHIData storage _chi_ = _chi[_tempChiId];
+        require(_chi_.vault == caller, "callback fail");
+    }
+
     function CHIDepositCallback(
         IERC20 token0,
         uint256 amount0,
@@ -249,16 +282,6 @@ contract CHIManager is
         _verifyCallback(msg.sender);
         if (amount0 > 0) token0.transferFrom(yangNFT, msg.sender, amount0);
         if (amount1 > 0) token1.transferFrom(yangNFT, msg.sender, amount1);
-    }
-
-    function _verifyCallback(address caller) internal view {
-        CHIData storage _chi_ = _chi[_tempChiId];
-        require(_chi_.vault == caller, "callback fail");
-    }
-
-    modifier isAuthorizedForToken(uint256 tokenId) {
-        require(_isApprovedOrOwner(msg.sender, tokenId), "Not approved");
-        _;
     }
 
     function addRange(
@@ -317,6 +340,23 @@ contract CHIManager is
         _chi_.equational = true;
     }
 
+    function addTickPercents(uint256 tokenId, uint256[] calldata percents)
+        external
+        override
+        isAuthorizedForToken(tokenId)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        uint256 rangeCount = ICHIVault(_chi_.vault).getRangeCount();
+        require(rangeCount == percents.length, "Invalid percents");
+        uint256 totalPercent = 0;
+        for (uint256 idx = 0; idx < rangeCount; idx++) {
+            tickPercents[_chi_.vault][idx] = percents[idx];
+            totalPercent = totalPercent.add(percents[idx]);
+        }
+        require(totalPercent <= 100, "Exceed max percent");
+        _chi_.equational = false;
+    }
+
     function collectProtocol(
         uint256 tokenId,
         uint256 amount0,
@@ -326,9 +366,6 @@ contract CHIManager is
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).collectProtocol(amount0, amount1, to);
     }
-
-    // tickPercents for rangeSets
-    mapping(address => mapping(uint256 => uint256)) public tickPercents;
 
     function addLiquidityAllToPosition(
         uint256 tokenId,
@@ -398,17 +435,6 @@ contract CHIManager is
         ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);
     }
 
-    function stateOfCHI(uint256 tokenId)
-        external
-        view
-        override
-        returns (bool isPaused, bool isArchived)
-    {
-        CHIData storage _chi_ = _chi[tokenId];
-        isPaused = _chi_.paused;
-        isArchived = _chi_.archived;
-    }
-
     function pausedCHI(uint256 tokenId) external override {
         CHIData storage _chi_ = _chi[tokenId];
         require(
@@ -434,7 +460,6 @@ contract CHIManager is
         _chi_.archived = true;
     }
 
-
     function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof)
     {
         CHIData storage _chi_ = _chi[tokenId];
@@ -444,27 +469,6 @@ contract CHIManager is
     function emergencyBurn(uint256 tokenId, int24 tickLower, int24 tickUpper, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof) {
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).emergencyBurn(tickLower, tickUpper);
-
-    function addTickPercents(uint256 tokenId, uint256[] calldata percents)
-        external
-        override
-        isAuthorizedForToken(tokenId)
-    {
-        CHIData storage _chi_ = _chi[tokenId];
-        uint256 rangeCount = ICHIVault(_chi_.vault).getRangeCount();
-        require(rangeCount == percents.length, "Invalid percents");
-        uint256 totalPercent = 0;
-        for (uint256 idx = 0; idx < rangeCount; idx++) {
-            tickPercents[_chi_.vault][idx] = percents[idx];
-            totalPercent = totalPercent.add(percents[idx]);
-        }
-        require(totalPercent <= 100, "Exceed max percent");
-        _chi_.equational = false;
-    }
-
-    function setDeployer(address _deployer) external onlyManager {
-        deployer = _deployer;
-
     }
 
     function tokenURI(uint256 tokenId)

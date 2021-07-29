@@ -71,7 +71,15 @@ async function chiManagerFixture(
   const chiManagerFactory = await ethers.getContractFactory('CHIManager')
   const chi = (await upgrades.deployProxy(
       chiManagerFactory,
-      [1, UniswapV3FactoryAddress, yangAddress, vaultDeployerAddress, info.merkleRoot, 70000]
+      [
+          info.merkleRoot,
+          1,
+          70000,
+          UniswapV3FactoryAddress,
+          yangAddress,
+          vaultDeployerAddress,
+          wallets[0].address
+      ]
   )) as CHIManager
   return { chi }
 }

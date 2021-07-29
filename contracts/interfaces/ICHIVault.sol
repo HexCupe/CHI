@@ -81,6 +81,6 @@ interface ICHIVault {
         returns (uint256 amount0, uint256 amount1);
 
     function sweep(address token, address to) external;
-    
+
     function emergencyBurn(int24 tickLower, int24 tickUpper) external;
 }
