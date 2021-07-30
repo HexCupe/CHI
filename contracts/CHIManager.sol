@@ -257,13 +257,14 @@ contract CHIManager is
             amount1Min
         );
 
-        // update rewardpool
-        _updateReward(yangId, tokenId);
-
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         positions[positionKey].shares = positions[positionKey].shares.add(
             shares
         );
+
+        // update rewardpool
+        _updateReward(yangId, tokenId);
+
     }
 
     function unsubscribe(
@@ -286,9 +287,6 @@ contract CHIManager is
         YANGPosition.Info storage _position = positions[positionKey];
         require(_position.shares >= shares, "s");
 
-        // update rewardpool
-        _updateReward(yangId, tokenId);
-
         (amount0, amount1) = ICHIVault(_chi_.vault).withdraw(
             yangId,
             shares,
@@ -297,6 +295,9 @@ contract CHIManager is
             yangNFT
         );
         _position.shares = positions[positionKey].shares.sub(shares);
+
+        // update rewardpool
+        _updateReward(yangId, tokenId);
     }
 
     // CALLBACK
