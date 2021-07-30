@@ -4,6 +4,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
@@ -97,7 +98,7 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     }
 
     function updateRewardFromCHI(uint256 yangId, uint256 chiId, address account)
-        external
+        public
         override
         onlyChiManager
         updateReward(yangId, chiId, account)
@@ -141,7 +142,7 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         periodFinish = timestamp;
     }
 
-    function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(0, 0, address(0))
+    function notifyRewardAmount(uint256 reward, uint256 _startTime) external onlyOwner updateReward(0, 0, address(0))
     {
         // handle the transfer of reward tokens via `transferFrom` to reduce the number
         // of transactions required and ensure correctness of the reward amount
@@ -155,8 +156,18 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
             rewardRate = reward.add(periodFinish.sub(block.timestamp).mul(rewardRate)).div(rewardsDuration);
         }
 
-        startTime = block.timestamp;
-        periodFinish = block.timestamp.add(rewardsDuration);
+        if (_startTime == 0) {
+            startTime = block.timestamp;
+            periodFinish = block.timestamp.add(rewardsDuration);
+        } else {
+            startTime = _startTime;
+            periodFinish = _startTime.add(rewardsDuration);
+        }
+        uint256 totalCHI = IERC721Enumerable(address(chiManager)).totalSupply();
+        for (uint256 idx = 1; idx <= totalCHI; idx++) {
+            lastUpdateTimes[idx] = startTime;
+        }
+
         emit RewardAdded(reward);
     }
 
