@@ -151,8 +151,9 @@ contract CHIManager is
         );
     }
 
-    function yang(bytes32 key) external override view returns (uint256 shares)
+    function yang(uint256 yangId, uint256 chiId) external override view returns (uint256 shares)
     {
+        bytes32 key = keccak256(abi.encodePacked(yangId, chiId));
         YANGPosition.Info memory _position = positions[key];
         shares = _position.shares;
     }
@@ -184,7 +185,7 @@ contract CHIManager is
         rewardPool = _rewardPool;
     }
 
-    function updateReward(uint256 yangId, uint256 chiId) internal
+    function _updateReward(uint256 yangId, uint256 chiId) internal
     {
         if (rewardPool != address(0)) {
             address account = IERC721(yangNFT).ownerOf(yangId);
@@ -257,7 +258,7 @@ contract CHIManager is
         );
 
         // update rewardpool
-        updateReward(yangId, tokenId);
+        _updateReward(yangId, tokenId);
 
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         positions[positionKey].shares = positions[positionKey].shares.add(
@@ -286,7 +287,7 @@ contract CHIManager is
         require(_position.shares >= shares, "s");
 
         // update rewardpool
-        updateReward(yangId, tokenId);
+        _updateReward(yangId, tokenId);
 
         (amount0, amount1) = ICHIVault(_chi_.vault).withdraw(
             yangId,

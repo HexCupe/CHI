@@ -31,11 +31,11 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     mapping(uint256 => uint256) public lastUpdateTimes;
     mapping(uint256 => uint256) public rewardPerShareStored;
 
-    mapping(address => uint256) public userRewardPerSharePaid;
-    mapping(address => uint256) public rewards;
+    mapping(uint256 => uint256) private _totalShares;
+    mapping(uint256 => mapping(address => uint256)) private _shares;
 
-    mapping(uint256 => mapping(address => uint256)) public _rewards;
-    mapping(uint256 => mapping(address => uint256)) public _userRewardPerSharePaid;
+    mapping(uint256 => mapping(address => uint256)) public rewards;
+    mapping(uint256 => mapping(address => uint256)) public userRewardPerSharePaid;
 
     // initialize
     function initialize(
@@ -55,17 +55,18 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
 
     /// View
     function shares(uint256 yangId, uint256 chiId) public override view returns (uint256) {
-        bytes32 positionKey = keccak256(abi.encodePacked(yangId, chiId));
-        return chiManager.yang(positionKey);
+        address account = IERC721(yangNFT).ownerOf(yangId);
+        return _shares[chiId][account];
     }
 
-    function totalShares(uint256 chiId) public view override returns (uint256) {
-        (, , , , , , ,uint256 _totalShares) = chiManager.chi(chiId);
-        return _totalShares;
+    function totalShares(uint256 chiId) public override view returns (uint256)
+    {
+        return _totalShares[chiId];
     }
 
     function rewardPerShare(uint256 chiId) public view returns (uint256) {
-        if (chiId == 0 || totalShares(chiId) == 0) {
+        uint256 _totalShares_ = _totalShares[chiId];
+        if (chiId == 0 || _totalShares_ == 0) {
             return uint256(0);
         }
         return
@@ -74,17 +75,19 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
                     .sub(lastUpdateTimes[chiId])
                     .mul(rewardRate)
                     .mul(1e18)
-                    .div(totalShares(chiId))
+                    .div(_totalShares_)
             );
     }
 
     function earned(uint256 yangId, uint256 chiId, address account) public override view returns (uint256) {
         require(IERC721(yangNFT).ownerOf(yangId) == account, 'Non owner of Yang');
-        uint256 _shares = shares(yangId, chiId);
-        return _shares
-                .mul(rewardPerShare(chiId).sub(_userRewardPerSharePaid[chiId][account]))
+        uint256 _share = _shares[chiId][account];
+        uint256 _totalShares_ = _totalShares[chiId];
+        return _share
+                .mul(rewardPerShare(chiId).sub(userRewardPerSharePaid[chiId][account]))
                 .div(1e18)
-                .add(_rewards[chiId][account]);
+                .div(_totalShares_)
+                .add(rewards[chiId][account]);
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
@@ -101,6 +104,10 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         onlyChiManager
         updateReward(yangId, chiId, account)
     {
+        (, , , , , , ,uint256 _totalShares_) = chiManager.chi(chiId);
+        _totalShares[chiId] = _totalShares_;
+        _shares[chiId][account] = chiManager.yang(yangId, chiId);
+
         uint256 reward = earned(yangId, chiId, account);
         emit RewardUpdated(yangId, chiId, reward);
     }
@@ -112,9 +119,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         checkStart
         updateReward(yangId, chiId, msg.sender)
     {
-        uint256 reward = _rewards[chiId][msg.sender];
+        uint256 reward = rewards[chiId][msg.sender];
         if (reward > 0) {
-            _rewards[chiId][msg.sender] = 0;
+            rewards[chiId][msg.sender] = 0;
             rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
@@ -163,8 +170,8 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
             lastUpdateTimes[chiId] = lastTimeRewardApplicable();
         }
         if (account != address(0) && yangId != 0 && chiId != 0) {
-            _rewards[chiId][account] = earned(yangId, chiId, account);
-            _userRewardPerSharePaid[chiId][account] = rewardPerShareStored[chiId];
+            rewards[chiId][account] = earned(yangId, chiId, account);
+            userRewardPerSharePaid[chiId][account] = rewardPerShareStored[chiId];
         }
         _;
     }
