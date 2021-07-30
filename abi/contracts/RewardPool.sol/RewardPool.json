@@ -1,31 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_rewardsToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_chiManager",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_yangNFT",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_rewardsDuration",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -82,30 +56,36 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "newDuration",
+        "name": "yangId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "chiId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reward",
         "type": "uint256"
       }
     ],
-    "name": "RewardsDurationUpdated",
+    "name": "RewardUpdated",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "newDuration",
         "type": "uint256"
       }
     ],
-    "name": "Withdrawn",
+    "name": "RewardsDurationUpdated",
     "type": "event"
   },
   {
@@ -182,6 +162,34 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_rewardsToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_chiManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_yangNFT",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rewardsDuration",
+        "type": "uint256"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "lastTimeRewardApplicable",
     "outputs": [
@@ -195,8 +203,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "lastUpdateTime",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "lastUpdateTimes",
     "outputs": [
       {
         "internalType": "uint256",
@@ -273,7 +287,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "rewardPerShareStored",
     "outputs": [
       {
@@ -434,6 +454,29 @@
       }
     ],
     "name": "updatePeriodFinish",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "yangId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chiId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "updateRewardFromCHI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

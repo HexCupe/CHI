@@ -5,6 +5,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
@@ -19,6 +20,7 @@ import "@uniswap/v3-periphery/contracts/libraries/PoolAddress.sol";
 
 import "./libraries/YANGPosition.sol";
 
+import "./interfaces/IRewardPool.sol";
 import "./interfaces/ICHIManager.sol";
 import "./interfaces/ICHIVaultDeployer.sol";
 
@@ -67,6 +69,8 @@ contract CHIManager is
         _tempChiId = 0;
     }
 
+    address public rewardPool;
+
     modifier onlyYANG() {
         require(msg.sender == address(yangNFT), "y");
         _;
@@ -112,6 +116,7 @@ contract CHIManager is
         _nextId = _initId;
         vaultFee = _vaultFee;
         __ERC721_init("YIN Uniswap V3 Positions Manager", "CHI");
+        __ReentrancyGuard_init();
     }
 
     // VIEW
@@ -172,6 +177,19 @@ contract CHIManager is
 
     function updateVaultFee(uint256 _vaultFee) external onlyManager {
         vaultFee = _vaultFee;
+    }
+
+    function updateRewardPool(address _rewardPool) external onlyManager
+    {
+        rewardPool = _rewardPool;
+    }
+
+    function updateReward(uint256 yangId, uint256 chiId) internal
+    {
+        if (rewardPool != address(0)) {
+            address account = IERC721(yangNFT).ownerOf(yangId);
+            IRewardPool(rewardPool).updateRewardFromCHI(yangId, chiId, account);
+        }
     }
 
     // CHI OPERATIONS
@@ -237,6 +255,10 @@ contract CHIManager is
             amount0Min,
             amount1Min
         );
+
+        // update rewardpool
+        updateReward(yangId, tokenId);
+
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         positions[positionKey].shares = positions[positionKey].shares.add(
             shares
@@ -262,6 +284,10 @@ contract CHIManager is
         bytes32 positionKey = keccak256(abi.encodePacked(yangId, tokenId));
         YANGPosition.Info storage _position = positions[positionKey];
         require(_position.shares >= shares, "s");
+
+        // update rewardpool
+        updateReward(yangId, tokenId);
+
         (amount0, amount1) = ICHIVault(_chi_.vault).withdraw(
             yangId,
             shares,

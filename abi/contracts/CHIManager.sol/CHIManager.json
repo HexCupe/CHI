@@ -750,6 +750,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "rewardPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -1144,6 +1157,19 @@
       }
     ],
     "name": "updateMerkleRoot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_rewardPool",
+        "type": "address"
+      }
+    ],
+    "name": "updateRewardPool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
