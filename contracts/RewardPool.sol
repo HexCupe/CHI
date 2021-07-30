@@ -34,6 +34,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     mapping(address => uint256) public userRewardPerSharePaid;
     mapping(address => uint256) public rewards;
 
+    mapping(uint256 => mapping(address => uint256)) public _rewards;
+    mapping(uint256 => mapping(address => uint256)) public _userRewardPerSharePaid;
+
     // initialize
     function initialize(
         address _rewardsToken,
@@ -79,9 +82,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         require(IERC721(yangNFT).ownerOf(yangId) == account, 'Non owner of Yang');
         uint256 _shares = shares(yangId, chiId);
         return _shares
-                .mul(rewardPerShare(chiId).sub(userRewardPerSharePaid[account]))
+                .mul(rewardPerShare(chiId).sub(_userRewardPerSharePaid[chiId][account]))
                 .div(1e18)
-                .add(rewards[account]);
+                .add(_rewards[chiId][account]);
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
@@ -109,9 +112,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         checkStart
         updateReward(yangId, chiId, msg.sender)
     {
-        uint256 reward = rewards[msg.sender];
+        uint256 reward = _rewards[chiId][msg.sender];
         if (reward > 0) {
-            rewards[msg.sender] = 0;
+            _rewards[chiId][msg.sender] = 0;
             rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
@@ -160,8 +163,8 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
             lastUpdateTimes[chiId] = lastTimeRewardApplicable();
         }
         if (account != address(0) && yangId != 0 && chiId != 0) {
-            rewards[account] = earned(yangId, chiId, account);
-            userRewardPerSharePaid[account] = rewardPerShareStored[chiId];
+            _rewards[chiId][account] = earned(yangId, chiId, account);
+            _userRewardPerSharePaid[chiId][account] = rewardPerShareStored[chiId];
         }
         _;
     }
