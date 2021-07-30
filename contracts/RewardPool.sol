@@ -82,11 +82,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     function earned(uint256 yangId, uint256 chiId, address account) public override view returns (uint256) {
         require(IERC721(yangNFT).ownerOf(yangId) == account, 'Non owner of Yang');
         uint256 _share = _shares[chiId][account];
-        uint256 _totalShares_ = _totalShares[chiId];
         return _share
                 .mul(rewardPerShare(chiId).sub(userRewardPerSharePaid[chiId][account]))
                 .div(1e18)
-                .div(_totalShares_)
                 .add(rewards[chiId][account]);
     }
 
