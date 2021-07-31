@@ -134,7 +134,10 @@ interface ICHIManager is ICHIDepositCallBack {
         bytes32[] calldata merkleProof
     ) external;
 
-    function yang(uint256 yangId, uint256 chiId) external view returns (uint256 shares);
+    function yang(uint256 yangId, uint256 chiId)
+        external
+        view
+        returns (uint256 shares);
 
     event Create(
         uint256 tokenId,

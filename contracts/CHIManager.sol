@@ -151,7 +151,11 @@ contract CHIManager is
         );
     }
 
-    function yang(uint256 yangId, uint256 chiId) external override view returns (uint256 shares)
+    function yang(uint256 yangId, uint256 chiId)
+        external
+        view
+        override
+        returns (uint256 shares)
     {
         bytes32 key = keccak256(abi.encodePacked(yangId, chiId));
         YANGPosition.Info memory _position = positions[key];
@@ -175,18 +179,15 @@ contract CHIManager is
         merkleRoot = _merkleRoot;
     }
 
-
     function updateVaultFee(uint256 _vaultFee) external onlyManager {
         vaultFee = _vaultFee;
     }
 
-    function updateRewardPool(address _rewardPool) external onlyManager
-    {
+    function updateRewardPool(address _rewardPool) external onlyManager {
         rewardPool = _rewardPool;
     }
 
-    function _updateReward(uint256 yangId, uint256 chiId) internal
-    {
+    function _updateReward(uint256 yangId, uint256 chiId) internal {
         if (rewardPool != address(0)) {
             address account = IERC721(yangNFT).ownerOf(yangId);
             IRewardPool(rewardPool).updateRewardFromCHI(yangId, chiId, account);
@@ -264,7 +265,6 @@ contract CHIManager is
 
         // update rewardpool
         _updateReward(yangId, tokenId);
-
     }
 
     function unsubscribe(
@@ -494,13 +494,22 @@ contract CHIManager is
         _chi_.archived = true;
     }
 
-    function sweep(uint256 tokenId, address token, address to, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof)
-    {
+    function sweep(
+        uint256 tokenId,
+        address token,
+        address to,
+        bytes32[] calldata merkleProof
+    ) external override onlyGovs(merkleProof) {
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).sweep(token, to);
     }
 
-    function emergencyBurn(uint256 tokenId, int24 tickLower, int24 tickUpper, bytes32[] calldata merkleProof) external override onlyGovs(merkleProof) {
+    function emergencyBurn(
+        uint256 tokenId,
+        int24 tickLower,
+        int24 tickUpper,
+        bytes32[] calldata merkleProof
+    ) external override onlyGovs(merkleProof) {
         CHIData storage _chi_ = _chi[tokenId];
         ICHIVault(_chi_.vault).emergencyBurn(tickLower, tickUpper);
     }

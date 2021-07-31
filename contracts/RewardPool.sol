@@ -16,7 +16,10 @@ import "./interfaces/ICHIManager.sol";
 import "./interfaces/IRewardPool.sol";
 import "./libraries/YANGPosition.sol";
 
-contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeable
+contract RewardPool is
+    IRewardPool,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable
 {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
@@ -36,7 +39,8 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     mapping(uint256 => mapping(address => uint256)) private _shares;
 
     mapping(uint256 => mapping(address => uint256)) public rewards;
-    mapping(uint256 => mapping(address => uint256)) public userRewardPerSharePaid;
+    mapping(uint256 => mapping(address => uint256))
+        public userRewardPerSharePaid;
 
     // initialize
     function initialize(
@@ -44,8 +48,7 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         address _chiManager,
         address _yangNFT,
         uint256 _rewardsDuration
-    ) public initializer
-    {
+    ) public initializer {
         rewardsToken = IERC20(_rewardsToken);
         chiManager = ICHIManager(_chiManager);
         rewardsDuration = _rewardsDuration;
@@ -55,13 +58,17 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     }
 
     /// View
-    function shares(uint256 yangId, uint256 chiId) public override view returns (uint256) {
+    function shares(uint256 yangId, uint256 chiId)
+        public
+        view
+        override
+        returns (uint256)
+    {
         address account = IERC721(yangNFT).ownerOf(yangId);
         return _shares[chiId][account];
     }
 
-    function totalShares(uint256 chiId) public override view returns (uint256)
-    {
+    function totalShares(uint256 chiId) public view override returns (uint256) {
         return _totalShares[chiId];
     }
 
@@ -80,11 +87,23 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
             );
     }
 
-    function earned(uint256 yangId, uint256 chiId, address account) public override view returns (uint256) {
-        require(IERC721(yangNFT).ownerOf(yangId) == account, 'Non owner of Yang');
+    function earned(
+        uint256 yangId,
+        uint256 chiId,
+        address account
+    ) public view override returns (uint256) {
+        require(
+            IERC721(yangNFT).ownerOf(yangId) == account,
+            "Non owner of Yang"
+        );
         uint256 _share = _shares[chiId][account];
-        return _share
-                .mul(rewardPerShare(chiId).sub(userRewardPerSharePaid[chiId][account]))
+        return
+            _share
+                .mul(
+                    rewardPerShare(chiId).sub(
+                        userRewardPerSharePaid[chiId][account]
+                    )
+                )
                 .div(1e18)
                 .add(rewards[chiId][account]);
     }
@@ -97,13 +116,12 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         return rewardRate.mul(rewardsDuration);
     }
 
-    function updateRewardFromCHI(uint256 yangId, uint256 chiId, address account)
-        public
-        override
-        onlyChiManager
-        updateReward(yangId, chiId, account)
-    {
-        (, , , , , , ,uint256 _totalShares_) = chiManager.chi(chiId);
+    function updateRewardFromCHI(
+        uint256 yangId,
+        uint256 chiId,
+        address account
+    ) public override onlyChiManager updateReward(yangId, chiId, account) {
+        (, , , , , , , uint256 _totalShares_) = chiManager.chi(chiId);
         _totalShares[chiId] = _totalShares_;
         _shares[chiId][account] = chiManager.yang(yangId, chiId);
 
@@ -138,11 +156,18 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
     }
 
     // End rewards emission earlier
-    function updatePeriodFinish(uint256 timestamp) external onlyOwner updateReward(0, 0, address(0)) {
+    function updatePeriodFinish(uint256 timestamp)
+        external
+        onlyOwner
+        updateReward(0, 0, address(0))
+    {
         periodFinish = timestamp;
     }
 
-    function notifyRewardAmount(uint256 reward, uint256 _startTime) external onlyOwner updateReward(0, 0, address(0))
+    function notifyRewardAmount(uint256 reward, uint256 _startTime)
+        external
+        onlyOwner
+        updateReward(0, 0, address(0))
     {
         // handle the transfer of reward tokens via `transferFrom` to reduce the number
         // of transactions required and ensure correctness of the reward amount
@@ -153,7 +178,9 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
         if (block.timestamp >= periodFinish) {
             rewardRate = reward.div(rewardsDuration);
         } else {
-            rewardRate = reward.add(periodFinish.sub(block.timestamp).mul(rewardRate)).div(rewardsDuration);
+            rewardRate = reward
+                .add(periodFinish.sub(block.timestamp).mul(rewardRate))
+                .div(rewardsDuration);
         }
 
         if (_startTime == 0) {
@@ -173,25 +200,34 @@ contract RewardPool is IRewardPool, OwnableUpgradeable, ReentrancyGuardUpgradeab
 
     /* ========== MODIFIERS ========== */
 
-    modifier updateReward(uint256 yangId, uint256 chiId, address account) {
+    modifier updateReward(
+        uint256 yangId,
+        uint256 chiId,
+        address account
+    ) {
         if (chiId != 0) {
             rewardPerShareStored[chiId] = rewardPerShare(chiId);
             lastUpdateTimes[chiId] = lastTimeRewardApplicable();
         }
         if (account != address(0) && yangId != 0 && chiId != 0) {
             rewards[chiId][account] = earned(yangId, chiId, account);
-            userRewardPerSharePaid[chiId][account] = rewardPerShareStored[chiId];
+            userRewardPerSharePaid[chiId][account] = rewardPerShareStored[
+                chiId
+            ];
         }
         _;
     }
 
-    modifier checkStart(){
+    modifier checkStart() {
         require(startTime != 0 && (block.timestamp > startTime), "not start");
         _;
     }
 
-    modifier onlyChiManager {
-        require(msg.sender == address(chiManager) || msg.sender == owner(), 'only manager');
+    modifier onlyChiManager() {
+        require(
+            msg.sender == address(chiManager) || msg.sender == owner(),
+            "only manager"
+        );
         _;
     }
 }
