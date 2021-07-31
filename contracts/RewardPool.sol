@@ -164,6 +164,11 @@ contract RewardPool is
         periodFinish = timestamp;
     }
 
+    function updateRewardRate(uint256 _rewardRate) external onlyOwner
+    {
+        rewardRate = _rewardRate;
+    }
+
     function notifyRewardAmount(uint256 reward, uint256 _startTime)
         external
         onlyOwner

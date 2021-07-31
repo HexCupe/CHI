@@ -5863,79 +5863,79 @@
             "contract": "RewardPool",
             "label": "rewardsToken",
             "type": "t_contract(IERC20)4382",
-            "src": "contracts/RewardPool.sol:24"
+            "src": "contracts/RewardPool.sol:27"
           },
           {
             "contract": "RewardPool",
             "label": "chiManager",
             "type": "t_contract(ICHIManager)12478",
-            "src": "contracts/RewardPool.sol:25"
+            "src": "contracts/RewardPool.sol:28"
           },
           {
             "contract": "RewardPool",
             "label": "yangNFT",
             "type": "t_address",
-            "src": "contracts/RewardPool.sol:26"
+            "src": "contracts/RewardPool.sol:29"
           },
           {
             "contract": "RewardPool",
             "label": "periodFinish",
             "type": "t_uint256",
-            "src": "contracts/RewardPool.sol:28"
+            "src": "contracts/RewardPool.sol:31"
           },
           {
             "contract": "RewardPool",
             "label": "rewardRate",
             "type": "t_uint256",
-            "src": "contracts/RewardPool.sol:29"
+            "src": "contracts/RewardPool.sol:32"
           },
           {
             "contract": "RewardPool",
             "label": "rewardsDuration",
             "type": "t_uint256",
-            "src": "contracts/RewardPool.sol:30"
+            "src": "contracts/RewardPool.sol:33"
           },
           {
             "contract": "RewardPool",
             "label": "startTime",
             "type": "t_uint256",
-            "src": "contracts/RewardPool.sol:31"
+            "src": "contracts/RewardPool.sol:34"
           },
           {
             "contract": "RewardPool",
             "label": "lastUpdateTimes",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/RewardPool.sol:32"
+            "src": "contracts/RewardPool.sol:35"
           },
           {
             "contract": "RewardPool",
             "label": "rewardPerShareStored",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/RewardPool.sol:33"
+            "src": "contracts/RewardPool.sol:36"
           },
           {
             "contract": "RewardPool",
             "label": "_totalShares",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/RewardPool.sol:35"
+            "src": "contracts/RewardPool.sol:38"
           },
           {
             "contract": "RewardPool",
             "label": "_shares",
             "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
-            "src": "contracts/RewardPool.sol:36"
+            "src": "contracts/RewardPool.sol:39"
           },
           {
             "contract": "RewardPool",
             "label": "rewards",
             "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
-            "src": "contracts/RewardPool.sol:38"
+            "src": "contracts/RewardPool.sol:41"
           },
           {
             "contract": "RewardPool",
             "label": "userRewardPerSharePaid",
             "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
-            "src": "contracts/RewardPool.sol:39"
+            "src": "contracts/RewardPool.sol:42"
           }
         ],
         "types": {
@@ -6310,6 +6310,166 @@
           },
           "t_array(t_uint256)50_storage": {
             "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "df25452b3893fbc143201b0fa6e770909687fb42dffadb9b2a2a64b80e042d3b": {
+      "address": "0x44c6FE480dd11acD3E61b1492AD465867CbcDdD5",
+      "txHash": "0x671cc25c16fa5d160a5e2d344bd7bf77cc9b80147da8b575390076d8b47a1a21",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:20"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:74"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "rewardsToken",
+            "type": "t_contract(IERC20)4382",
+            "src": "contracts/RewardPool.sol:27"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "chiManager",
+            "type": "t_contract(ICHIManager)12490",
+            "src": "contracts/RewardPool.sol:28"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "yangNFT",
+            "type": "t_address",
+            "src": "contracts/RewardPool.sol:29"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "periodFinish",
+            "type": "t_uint256",
+            "src": "contracts/RewardPool.sol:31"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "rewardRate",
+            "type": "t_uint256",
+            "src": "contracts/RewardPool.sol:32"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "rewardsDuration",
+            "type": "t_uint256",
+            "src": "contracts/RewardPool.sol:33"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "startTime",
+            "type": "t_uint256",
+            "src": "contracts/RewardPool.sol:34"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "lastUpdateTimes",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts/RewardPool.sol:35"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "rewardPerShareStored",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts/RewardPool.sol:36"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "_totalShares",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts/RewardPool.sol:38"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "_shares",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "src": "contracts/RewardPool.sol:39"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "rewards",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "src": "contracts/RewardPool.sol:41"
+          },
+          {
+            "contract": "RewardPool",
+            "label": "userRewardPerSharePaid",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "src": "contracts/RewardPool.sol:42"
+          }
+        ],
+        "types": {
+          "t_contract(IERC20)4382": {
+            "label": "contract IERC20"
+          },
+          "t_contract(ICHIManager)12490": {
+            "label": "contract ICHIManager"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(uint256 => mapping(address => uint256))"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
           }
         }
       }
