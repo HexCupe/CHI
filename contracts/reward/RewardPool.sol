@@ -12,9 +12,9 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
-import "./interfaces/ICHIManager.sol";
-import "./interfaces/IRewardPool.sol";
-import "./libraries/YANGPosition.sol";
+import "../interfaces/ICHIManager.sol";
+import "../interfaces/IRewardPool.sol";
+import "../libraries/YANGPosition.sol";
 
 contract RewardPool is
     IRewardPool,
@@ -164,8 +164,7 @@ contract RewardPool is
         periodFinish = timestamp;
     }
 
-    function updateRewardRate(uint256 _rewardRate) external onlyOwner
-    {
+    function updateRewardRate(uint256 _rewardRate) external onlyOwner {
         rewardRate = _rewardRate;
     }
 
