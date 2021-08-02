@@ -409,14 +409,17 @@ contract CHIManager is
         CHIData storage _chi_ = _chi[tokenId];
         uint256 count = ICHIVault(_chi_.vault).getRangeCount();
         if (_chi_.equational) {
-            uint256 divideAmount0 = amount0Total.div(count);
-            uint256 divideAmount1 = amount1Total.div(count);
-            for (uint256 idx = 0; idx < count; idx++) {
-                ICHIVault(_chi_.vault).addLiquidityToPosition(
-                    idx,
-                    divideAmount0,
-                    divideAmount1
-                );
+            if (count > 0) {
+                // round down
+                uint256 divideAmount0 = amount0Total.div(count);
+                uint256 divideAmount1 = amount1Total.div(count);
+                for (uint256 idx = 0; idx < count; idx++) {
+                    ICHIVault(_chi_.vault).addLiquidityToPosition(
+                        idx,
+                        divideAmount0,
+                        divideAmount1
+                    );
+                }
             }
         } else {
             for (uint256 idx = 0; idx < count; idx++) {
