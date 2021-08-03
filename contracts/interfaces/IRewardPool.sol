@@ -27,7 +27,7 @@ interface IRewardPool {
 
     /// Event
     event RewardAdded(uint256 reward);
-    event RewardUpdated(uint256 yangId, uint256 chiId, uint256 reward);
+    event RewardUpdated(uint256 yangId, uint256 chiId);
     event RewardPaid(address indexed user, uint256 reward);
     event RewardsDurationUpdated(uint256 newDuration);
 }

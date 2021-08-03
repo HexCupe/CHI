@@ -125,8 +125,7 @@ contract RewardPool is
         _totalShares[chiId] = _totalShares_;
         _shares[chiId][account] = chiManager.yang(yangId, chiId);
 
-        uint256 reward = earned(yangId, chiId, account);
-        emit RewardUpdated(yangId, chiId, reward);
+        emit RewardUpdated(yangId, chiId);
     }
 
     function getReward(uint256 yangId, uint256 chiId)
