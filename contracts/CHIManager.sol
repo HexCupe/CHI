@@ -187,10 +187,10 @@ contract CHIManager is
         rewardPool = _rewardPool;
     }
 
-    function _updateReward(uint256 yangId, uint256 chiId) internal {
+    function _updateReward(uint256 yangId, uint256 chiId, uint256 shares) internal {
         if (rewardPool != address(0)) {
-            address account = IERC721(yangNFT).ownerOf(yangId);
-            IRewardPool(rewardPool).updateRewardFromCHI(yangId, chiId, account);
+            CHIData storage _chi_ = _chi[chiId];
+            IRewardPool(rewardPool).updateRewardFromCHI(yangId, chiId, shares, ICHIVault(_chi_.vault).totalSupply());
         }
     }
 
@@ -264,7 +264,7 @@ contract CHIManager is
         );
 
         // update rewardpool
-        _updateReward(yangId, tokenId);
+        _updateReward(yangId, tokenId, positions[positionKey].shares);
     }
 
     function unsubscribe(
@@ -297,7 +297,7 @@ contract CHIManager is
         _position.shares = positions[positionKey].shares.sub(shares);
 
         // update rewardpool
-        _updateReward(yangId, tokenId);
+        _updateReward(yangId, tokenId, _position.shares);
     }
 
     // CALLBACK
@@ -318,25 +318,124 @@ contract CHIManager is
         if (amount1 > 0) token1.transferFrom(yangNFT, msg.sender, amount1);
     }
 
-    function addRange(
+    function collectProtocol(
         uint256 tokenId,
-        int24 tickLower,
-        int24 tickUpper
-    )
-        external
-        override
-        isAuthorizedForToken(tokenId)
-        onlyWhenNotPaused(tokenId)
-    {
+        uint256 amount0,
+        uint256 amount1,
+        address to
+    ) external override onlyManager onlyWhenNotPaused(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
-        ICHIVault(_chi_.vault).addRange(tickLower, tickUpper);
-        _chi_.equational = true;
+        ICHIVault(_chi_.vault).collectProtocol(amount0, amount1, to);
     }
 
-    function removeRange(
+    function _addAllLiquidityToPosition(
+        CHIData memory _chi_,
+        uint256 amount0Total,
+        uint256 amount1Total
+    ) internal
+    {
+        uint256 count = ICHIVault(_chi_.vault).getRangeCount();
+        if (_chi_.equational) {
+            if (count > 0) {
+                // round down
+                uint256 divideAmount0 = amount0Total.div(count);
+                uint256 divideAmount1 = amount1Total.div(count);
+                for (uint256 idx = 0; idx < count - 1; idx++) {
+                    ICHIVault(_chi_.vault).addLiquidityToPosition(
+                        idx,
+                        divideAmount0,
+                        divideAmount1
+                    );
+                }
+                ICHIVault(_chi_.vault).addLiquidityToPosition(
+                    count - 1,
+                    amount0Total.sub(divideAmount0.mul(count - 1)),
+                    amount1Total.sub(divideAmount1.mul(count - 1))
+                );
+            }
+        } else {
+            uint256 percentRate = 1e4;
+            uint256 amount0Accrued = 0;
+            uint256 amount1Accrued = 0;
+            for (uint256 idx = 0; idx < count - 1; idx++) {
+                uint256 percent = tickPercents[_chi_.vault][idx];
+                uint256 amount0Desired = amount0Total.mul(percent).div(percentRate);
+                uint256 amount1Desired = amount1Total.mul(percent).div(percentRate);
+
+                amount0Accrued = amount0Accrued.add(amount0Desired);
+                amount1Accrued = amount1Accrued.add(amount1Desired);
+                ICHIVault(_chi_.vault).addLiquidityToPosition(
+                    idx,
+                    amount0Desired,
+                    amount1Desired
+                );
+            }
+            ICHIVault(_chi_.vault).addLiquidityToPosition(
+                count - 1,
+                amount0Total.sub(amount0Accrued),
+                amount1Total.sub(amount1Accrued)
+            );
+        }
+    }
+
+    function _addTickPercents(address _vault, uint256[] calldata percents) internal
+    {
+        uint256 percentRate = 1e4;
+        uint256 rangeCount = ICHIVault(_vault).getRangeCount();
+        require(rangeCount == percents.length, "Invalid percents");
+        uint256 totalPercent = 0;
+        for (uint256 idx = 0; idx < rangeCount; idx++) {
+            tickPercents[_vault][idx] = percents[idx];
+            totalPercent = totalPercent.add(percents[idx]);
+        }
+        require(totalPercent == percentRate, "percentRate");
+    }
+
+    function addTickPercents(uint256 tokenId, uint256[] calldata percents)
+        external
+        override
+        isAuthorizedForToken(tokenId)
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        address vault = _chi_.vault;
+        for (uint256 i = 0; i < ICHIVault(vault).getRangeCount(); i++) {
+            removeAllLiquidityFromPosition(tokenId, i);
+        }
+        _addTickPercents(vault, percents);
+        _chi_.equational = false;
+
+        IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
+        uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
+        uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
+        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        emit ChangeLiquidity(tokenId, vault);
+    }
+
+    function _addAndRemoveRanges(
+        address _vault,
+        RangeParams[] calldata addRanges,
+        RangeParams[] calldata removeRanges
+    ) internal
+    {
+        for (uint256 i = 0; i < addRanges.length; i++) {
+            ICHIVault(_vault).addRange(
+                addRanges[i].tickLower,
+                addRanges[i].tickUpper
+            );
+        }
+        for (uint256 i = 0; i < removeRanges.length; i++) {
+            ICHIVault(_vault).removeRange(
+                removeRanges[i].tickLower,
+                removeRanges[i].tickUpper
+            );
+        }
+    }
+
+    function addAndRemoveRangesWithPercents(
         uint256 tokenId,
-        int24 tickLower,
-        int24 tickUpper
+        RangeParams[] calldata addRanges,
+        RangeParams[] calldata removeRanges,
+        uint256[] calldata percents
     )
         external
         override
@@ -344,8 +443,19 @@ contract CHIManager is
         onlyWhenNotPaused(tokenId)
     {
         CHIData storage _chi_ = _chi[tokenId];
-        ICHIVault(_chi_.vault).removeRange(tickLower, tickUpper);
-        _chi_.equational = true;
+        address vault = _chi_.vault;
+        for (uint256 i = 0; i < ICHIVault(vault).getRangeCount(); i++) {
+            removeAllLiquidityFromPosition(tokenId, i);
+        }
+        _addAndRemoveRanges(vault, addRanges, removeRanges);
+        _addTickPercents(vault, percents);
+        _chi_.equational = false;
+
+        IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
+        uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
+        uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
+        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        emit ChangeLiquidity(tokenId, vault);
     }
 
     function addAndRemoveRanges(
@@ -359,80 +469,71 @@ contract CHIManager is
         onlyWhenNotPaused(tokenId)
     {
         CHIData storage _chi_ = _chi[tokenId];
-        for (uint256 i = 0; i < addRanges.length; i++) {
-            ICHIVault(_chi_.vault).addRange(
-                addRanges[i].tickLower,
-                addRanges[i].tickUpper
-            );
+        address vault = _chi_.vault;
+        for (uint256 i = 0; i < ICHIVault(vault).getRangeCount(); i++) {
+            removeAllLiquidityFromPosition(tokenId, i);
         }
-        for (uint256 i = 0; i < removeRanges.length; i++) {
-            ICHIVault(_chi_.vault).removeRange(
-                removeRanges[i].tickLower,
-                removeRanges[i].tickUpper
-            );
-        }
+        _addAndRemoveRanges(vault, addRanges, removeRanges);
         _chi_.equational = true;
+
+        IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
+        uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
+        uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
+        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        emit ChangeLiquidity(tokenId, vault);
     }
 
-    function addTickPercents(uint256 tokenId, uint256[] calldata percents)
-        external
-        override
-        isAuthorizedForToken(tokenId)
+    function addRangeAndLiquidity(
+        uint256 tokenId,
+        int24 tickLower,
+        int24 tickUpper
+    ) external override isAuthorizedForToken(tokenId) onlyWhenNotPaused(tokenId)
     {
         CHIData storage _chi_ = _chi[tokenId];
-        uint256 rangeCount = ICHIVault(_chi_.vault).getRangeCount();
-        require(rangeCount == percents.length, "Invalid percents");
-        uint256 totalPercent = 0;
-        for (uint256 idx = 0; idx < rangeCount; idx++) {
-            tickPercents[_chi_.vault][idx] = percents[idx];
-            totalPercent = totalPercent.add(percents[idx]);
+        address vault = _chi_.vault;
+        for (uint256 i = 0; i < ICHIVault(vault).getRangeCount(); i++) {
+            removeAllLiquidityFromPosition(tokenId, i);
         }
-        require(totalPercent <= 100, "Exceed max percent");
-        _chi_.equational = false;
+        ICHIVault(vault).addRange(tickLower, tickUpper);
+        _chi_.equational = true;
+
+        IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
+        uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
+        uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
+        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        emit ChangeLiquidity(tokenId, vault);
     }
 
-    function collectProtocol(
+    function removeRangeAndLiquidity(
         uint256 tokenId,
-        uint256 amount0,
-        uint256 amount1,
-        address to
-    ) external override onlyManager onlyWhenNotPaused(tokenId) {
+        int24 tickLower,
+        int24 tickUpper
+    ) external override isAuthorizedForToken(tokenId) onlyWhenNotPaused(tokenId)
+    {
         CHIData storage _chi_ = _chi[tokenId];
-        ICHIVault(_chi_.vault).collectProtocol(amount0, amount1, to);
+        address vault = _chi_.vault;
+        for (uint256 i = 0; i < ICHIVault(vault).getRangeCount(); i++) {
+            removeAllLiquidityFromPosition(tokenId, i);
+        }
+        ICHIVault(vault).removeRange(tickLower, tickUpper);
+        _chi_.equational = true;
+
+        IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
+        uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
+        uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
+        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        emit ChangeLiquidity(tokenId, vault);
     }
 
-    function addLiquidityAllToPosition(
+    function addAllLiquidityToPosition(
         uint256 tokenId,
         uint256 amount0Total,
         uint256 amount1Total
-    ) external override onlyManager onlyWhenNotPaused(tokenId) {
+    ) public override onlyManager onlyWhenNotPaused(tokenId) {
         CHIData storage _chi_ = _chi[tokenId];
-        uint256 count = ICHIVault(_chi_.vault).getRangeCount();
-        if (_chi_.equational) {
-            if (count > 0) {
-                // round down
-                uint256 divideAmount0 = amount0Total.div(count);
-                uint256 divideAmount1 = amount1Total.div(count);
-                for (uint256 idx = 0; idx < count; idx++) {
-                    ICHIVault(_chi_.vault).addLiquidityToPosition(
-                        idx,
-                        divideAmount0,
-                        divideAmount1
-                    );
-                }
-            }
-        } else {
-            for (uint256 idx = 0; idx < count; idx++) {
-                uint256 percent = tickPercents[_chi_.vault][idx];
-                uint256 amount0Desired = amount0Total.mul(percent).div(100);
-                uint256 amount1Desired = amount1Total.mul(percent).div(100);
-                ICHIVault(_chi_.vault).addLiquidityToPosition(
-                    idx,
-                    amount0Desired,
-                    amount1Desired
-                );
-            }
-        }
+        address vault = _chi_.vault;
+        _addAllLiquidityToPosition(_chi_, amount0Total, amount1Total);
+        emit ChangeLiquidity(tokenId, vault);
     }
 
     function addLiquidityToPosition(
@@ -447,6 +548,7 @@ contract CHIManager is
             amount0Desired,
             amount1Desired
         );
+        emit ChangeLiquidity(tokenId, _chi_.vault);
     }
 
     function removeLiquidityFromPosition(
@@ -460,16 +562,18 @@ contract CHIManager is
             rangeIndex,
             liquidity
         );
+        emit ChangeLiquidity(tokenId, _chi_.vault);
     }
 
     function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
-        external
+        public
         override
         onlyManager
     {
         CHIData storage _chi_ = _chi[tokenId];
         require(!_chi_.archived, "CHI Archived");
         ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);
+        emit ChangeLiquidity(tokenId, _chi_.vault);
     }
 
     function pausedCHI(uint256 tokenId) external override {

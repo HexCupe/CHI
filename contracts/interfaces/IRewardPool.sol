@@ -12,8 +12,7 @@ interface IRewardPool {
 
     function earned(
         uint256 yangId,
-        uint256 chiId,
-        address account
+        uint256 chiId
     ) external view returns (uint256);
 
     // Mutation
@@ -22,7 +21,8 @@ interface IRewardPool {
     function updateRewardFromCHI(
         uint256 yangId,
         uint256 chiId,
-        address account
+        uint256 _shares_,
+        uint256 _totalShares_
     ) external;
 
     /// Event

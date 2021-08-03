@@ -14,7 +14,6 @@ import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol
 
 import "../interfaces/ICHIManager.sol";
 import "../interfaces/IRewardPool.sol";
-import "../libraries/YANGPosition.sol";
 
 contract RewardPool is
     IRewardPool,
@@ -36,10 +35,10 @@ contract RewardPool is
     mapping(uint256 => uint256) public rewardPerShareStored;
 
     mapping(uint256 => uint256) private _totalShares;
-    mapping(uint256 => mapping(address => uint256)) private _shares;
+    mapping(uint256 => mapping(uint256 => uint256)) private _shares;
 
-    mapping(uint256 => mapping(address => uint256)) public rewards;
-    mapping(uint256 => mapping(address => uint256))
+    mapping(uint256 => mapping(uint256 => uint256)) public rewards;
+    mapping(uint256 => mapping(uint256 => uint256))
         public userRewardPerSharePaid;
 
     // initialize
@@ -64,8 +63,7 @@ contract RewardPool is
         override
         returns (uint256)
     {
-        address account = IERC721(yangNFT).ownerOf(yangId);
-        return _shares[chiId][account];
+        return _shares[chiId][yangId];
     }
 
     function totalShares(uint256 chiId) public view override returns (uint256) {
@@ -89,23 +87,18 @@ contract RewardPool is
 
     function earned(
         uint256 yangId,
-        uint256 chiId,
-        address account
+        uint256 chiId
     ) public view override returns (uint256) {
-        require(
-            IERC721(yangNFT).ownerOf(yangId) == account,
-            "Non owner of Yang"
-        );
-        uint256 _share = _shares[chiId][account];
+        uint256 _share = _shares[chiId][yangId];
         return
             _share
                 .mul(
                     rewardPerShare(chiId).sub(
-                        userRewardPerSharePaid[chiId][account]
+                        userRewardPerSharePaid[chiId][yangId]
                     )
                 )
                 .div(1e18)
-                .add(rewards[chiId][account]);
+                .add(rewards[chiId][yangId]);
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
@@ -119,11 +112,11 @@ contract RewardPool is
     function updateRewardFromCHI(
         uint256 yangId,
         uint256 chiId,
-        address account
-    ) public override onlyChiManager updateReward(yangId, chiId, account) {
-        (, , , , , , , uint256 _totalShares_) = chiManager.chi(chiId);
+        uint256 _shares_,
+        uint256 _totalShares_
+    ) public override onlyChiManager updateReward(yangId, chiId) {
         _totalShares[chiId] = _totalShares_;
-        _shares[chiId][account] = chiManager.yang(yangId, chiId);
+        _shares[chiId][yangId] = _shares_;
 
         emit RewardUpdated(yangId, chiId);
     }
@@ -133,14 +126,23 @@ contract RewardPool is
         override
         nonReentrant
         checkStart
-        updateReward(yangId, chiId, msg.sender)
+        updateReward(yangId, chiId)
     {
-        uint256 reward = rewards[chiId][msg.sender];
+        require(
+            IERC721(yangNFT).ownerOf(yangId) == msg.sender,
+            "Non owner of Yang"
+        );
+        uint256 reward = rewards[chiId][yangId];
         if (reward > 0) {
-            rewards[chiId][msg.sender] = 0;
+            rewards[chiId][yangId] = 0;
             rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
+    }
+
+    function setReward(uint256 yangId, uint256 chiId, uint256 reward) external onlyOwner
+    {
+        rewards[chiId][yangId] = reward;
     }
 
     /// Restricted
@@ -158,7 +160,7 @@ contract RewardPool is
     function updatePeriodFinish(uint256 timestamp)
         external
         onlyOwner
-        updateReward(0, 0, address(0))
+        updateReward(0, 0)
     {
         periodFinish = timestamp;
     }
@@ -170,7 +172,7 @@ contract RewardPool is
     function notifyRewardAmount(uint256 reward, uint256 _startTime)
         external
         onlyOwner
-        updateReward(0, 0, address(0))
+        updateReward(0, 0)
     {
         // handle the transfer of reward tokens via `transferFrom` to reduce the number
         // of transactions required and ensure correctness of the reward amount
@@ -205,16 +207,15 @@ contract RewardPool is
 
     modifier updateReward(
         uint256 yangId,
-        uint256 chiId,
-        address account
+        uint256 chiId
     ) {
         if (chiId != 0) {
             rewardPerShareStored[chiId] = rewardPerShare(chiId);
             lastUpdateTimes[chiId] = lastTimeRewardApplicable();
         }
-        if (account != address(0) && yangId != 0 && chiId != 0) {
-            rewards[chiId][account] = earned(yangId, chiId, account);
-            userRewardPerSharePaid[chiId][account] = rewardPerShareStored[
+        if (yangId != 0 && chiId != 0) {
+            rewards[chiId][yangId] = earned(yangId, chiId);
+            userRewardPerSharePaid[chiId][yangId] = rewardPerShareStored[
                 chiId
             ];
         }

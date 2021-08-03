@@ -60,23 +60,21 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Min
     ) external returns (uint256 amount0, uint256 amount1);
 
-    function addRange(
-        uint256 tokenId,
-        int24 tickLower,
-        int24 tickUpper
-    ) external;
-
-    function removeRange(
-        uint256 tokenId,
-        int24 tickLower,
-        int24 tickUpper
-    ) external;
-
     function addAndRemoveRanges(
         uint256 tokenId,
         RangeParams[] calldata addRanges,
         RangeParams[] calldata removeRanges
     ) external;
+
+    function addAndRemoveRangesWithPercents(
+        uint256 tokenId,
+        RangeParams[] calldata addRanges,
+        RangeParams[] calldata removeRanges,
+        uint256[] calldata percents
+    ) external;
+
+    function addRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
+    function removeRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
 
     function collectProtocol(
         uint256 tokenId,
@@ -92,7 +90,7 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Desired
     ) external;
 
-    function addLiquidityAllToPosition(
+    function addAllLiquidityToPosition(
         uint256 tokenId,
         uint256 amount0Total,
         uint256 amount1Total
@@ -145,4 +143,6 @@ interface ICHIManager is ICHIDepositCallBack {
         address vault,
         uint256 vaultFee
     );
+
+    event ChangeLiquidity(uint256 indexed tokenId, address indexed vault);
 }
