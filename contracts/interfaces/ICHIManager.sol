@@ -144,5 +144,5 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 vaultFee
     );
 
-    event ChangeLiquidity(uint256 indexed tokenId, address indexed vault);
+    event ChangeLiquidity(uint256 tokenId, address vault);
 }
