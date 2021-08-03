@@ -277,9 +277,13 @@ contract CHIVault is ICHIVault, IUniswapV3MintCallback, ReentrancyGuard {
         uint256 balanceToken0 = _balanceToken0();
         uint256 balanceToken1 = _balanceToken1();
 
-        if (balanceToken0 <= withdrawal0 && balanceToken1 <= withdrawal1) {
-            uint256 shouldWithdrawal0 = withdrawal0.sub(balanceToken0);
-            uint256 shouldWithdrawal1 = withdrawal1.sub(balanceToken1);
+        if (balanceToken0 < withdrawal0 || balanceToken1 < withdrawal1) {
+            uint256 shouldWithdrawal0 = balanceToken0 < withdrawal0
+                ? withdrawal0.sub(balanceToken0)
+                : 0;
+            uint256 shouldWithdrawal1 = balanceToken1 < withdrawal1
+                ? withdrawal1.sub(balanceToken1)
+                : 0;
 
             (
                 uint256 _liquidityAmount0,
