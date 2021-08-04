@@ -73,8 +73,8 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256[] calldata percents
     ) external;
 
-    function addRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
-    function removeRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
+    function addRange(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
+    function removeRange(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
 
     function collectProtocol(
         uint256 tokenId,

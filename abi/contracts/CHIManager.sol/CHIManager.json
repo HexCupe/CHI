@@ -320,7 +320,7 @@
         "type": "int24"
       }
     ],
-    "name": "addRangeAndLiquidity",
+    "name": "addRange",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -815,7 +815,7 @@
         "type": "int24"
       }
     ],
-    "name": "removeRangeAndLiquidity",
+    "name": "removeRange",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

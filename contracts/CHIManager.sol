@@ -411,7 +411,9 @@ contract CHIManager is
         IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
         uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
         uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
-        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        if (availableBalance0 > 0 || availableBalance1 > 0) {
+            _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        }
         emit ChangeLiquidity(tokenId, vault);
     }
 
@@ -458,7 +460,9 @@ contract CHIManager is
         IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
         uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
         uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
-        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        if (availableBalance0 > 0 || availableBalance1 > 0) {
+            _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        }
         emit ChangeLiquidity(tokenId, vault);
     }
 
@@ -483,11 +487,13 @@ contract CHIManager is
         IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
         uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
         uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
-        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        if (availableBalance0 > 0 || availableBalance1 > 0) {
+            _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        }
         emit ChangeLiquidity(tokenId, vault);
     }
 
-    function addRangeAndLiquidity(
+    function addRange(
         uint256 tokenId,
         int24 tickLower,
         int24 tickUpper
@@ -504,11 +510,13 @@ contract CHIManager is
         IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
         uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
         uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
-        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        if (availableBalance0 > 0 || availableBalance1 > 0) {
+            _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        }
         emit ChangeLiquidity(tokenId, vault);
     }
 
-    function removeRangeAndLiquidity(
+    function removeRange(
         uint256 tokenId,
         int24 tickLower,
         int24 tickUpper
@@ -525,7 +533,9 @@ contract CHIManager is
         IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);
         uint256 availableBalance0 = IERC20(pool.token0()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees0());
         uint256 availableBalance1 = IERC20(pool.token1()).balanceOf(vault).sub(ICHIVault(vault).accruedProtocolFees1());
-        _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        if (availableBalance0 > 0 || availableBalance1 > 0) {
+            _addAllLiquidityToPosition(_chi_, availableBalance0, availableBalance1);
+        }
         emit ChangeLiquidity(tokenId, vault);
     }
 
