@@ -1222,6 +1222,19 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_deployer",
+        "type": "address"
+      }
+    ],
+    "name": "updateDeployer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "_merkleRoot",
         "type": "bytes32"
