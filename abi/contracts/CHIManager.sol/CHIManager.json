@@ -215,53 +215,6 @@
         "internalType": "struct ICHIManager.RangeParams[]",
         "name": "removeRanges",
         "type": "tuple[]"
-      }
-    ],
-    "name": "addAndRemoveRanges",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "int24",
-            "name": "tickLower",
-            "type": "int24"
-          },
-          {
-            "internalType": "int24",
-            "name": "tickUpper",
-            "type": "int24"
-          }
-        ],
-        "internalType": "struct ICHIManager.RangeParams[]",
-        "name": "addRanges",
-        "type": "tuple[]"
-      },
-      {
-        "components": [
-          {
-            "internalType": "int24",
-            "name": "tickLower",
-            "type": "int24"
-          },
-          {
-            "internalType": "int24",
-            "name": "tickUpper",
-            "type": "int24"
-          }
-        ],
-        "internalType": "struct ICHIManager.RangeParams[]",
-        "name": "removeRanges",
-        "type": "tuple[]"
       },
       {
         "internalType": "uint256[]",
@@ -270,34 +223,6 @@
       }
     ],
     "name": "addAndRemoveRangesWithPercents",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rangeIndex",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount0Desired",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount1Desired",
-        "type": "uint256"
-      }
-    ],
-    "name": "addLiquidityToPosition",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -320,7 +245,7 @@
         "type": "int24"
       }
     ],
-    "name": "addRangeAndLiquidity",
+    "name": "addRange",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -764,47 +689,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "rangeIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "removeAllLiquidityFromPosition",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rangeIndex",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "liquidity",
-        "type": "uint128"
-      }
-    ],
-    "name": "removeLiquidityFromPosition",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
         "internalType": "int24",
         "name": "tickLower",
         "type": "int24"
@@ -815,7 +699,7 @@
         "type": "int24"
       }
     ],
-    "name": "removeRangeAndLiquidity",
+    "name": "removeRange",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

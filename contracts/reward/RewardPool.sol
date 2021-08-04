@@ -85,10 +85,12 @@ contract RewardPool is
             );
     }
 
-    function earned(
-        uint256 yangId,
-        uint256 chiId
-    ) public view override returns (uint256) {
+    function earned(uint256 yangId, uint256 chiId)
+        public
+        view
+        override
+        returns (uint256)
+    {
         uint256 _share = _shares[chiId][yangId];
         return
             _share
@@ -140,8 +142,11 @@ contract RewardPool is
         }
     }
 
-    function setReward(uint256 yangId, uint256 chiId, uint256 reward) external onlyOwner
-    {
+    function setReward(
+        uint256 yangId,
+        uint256 chiId,
+        uint256 reward
+    ) external onlyOwner {
         rewards[chiId][yangId] = reward;
     }
 
@@ -205,19 +210,14 @@ contract RewardPool is
 
     /* ========== MODIFIERS ========== */
 
-    modifier updateReward(
-        uint256 yangId,
-        uint256 chiId
-    ) {
+    modifier updateReward(uint256 yangId, uint256 chiId) {
         if (chiId != 0) {
             rewardPerShareStored[chiId] = rewardPerShare(chiId);
             lastUpdateTimes[chiId] = lastTimeRewardApplicable();
         }
         if (yangId != 0 && chiId != 0) {
             rewards[chiId][yangId] = earned(yangId, chiId);
-            userRewardPerSharePaid[chiId][yangId] = rewardPerShareStored[
-                chiId
-            ];
+            userRewardPerSharePaid[chiId][yangId] = rewardPerShareStored[chiId];
         }
         _;
     }

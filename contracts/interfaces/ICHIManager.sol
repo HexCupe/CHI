@@ -60,11 +60,11 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Min
     ) external returns (uint256 amount0, uint256 amount1);
 
-    function addAndRemoveRanges(
-        uint256 tokenId,
-        RangeParams[] calldata addRanges,
-        RangeParams[] calldata removeRanges
-    ) external;
+    /*function addAndRemoveRanges(*/
+        /*uint256 tokenId,*/
+        /*RangeParams[] calldata addRanges,*/
+        /*RangeParams[] calldata removeRanges*/
+    /*) external;*/
 
     function addAndRemoveRangesWithPercents(
         uint256 tokenId,
@@ -73,8 +73,17 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256[] calldata percents
     ) external;
 
-    function addRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
-    function removeRangeAndLiquidity(uint256 tokenId, int24 tickLower, int24 tickUpper) external;
+    function addRange(
+        uint256 tokenId,
+        int24 tickLower,
+        int24 tickUpper
+    ) external;
+
+    function removeRange(
+        uint256 tokenId,
+        int24 tickLower,
+        int24 tickUpper
+    ) external;
 
     function collectProtocol(
         uint256 tokenId,
@@ -83,12 +92,12 @@ interface ICHIManager is ICHIDepositCallBack {
         address to
     ) external;
 
-    function addLiquidityToPosition(
-        uint256 tokenId,
-        uint256 rangeIndex,
-        uint256 amount0Desired,
-        uint256 amount1Desired
-    ) external;
+    /*function addLiquidityToPosition(*/
+        /*uint256 tokenId,*/
+        /*uint256 rangeIndex,*/
+        /*uint256 amount0Desired,*/
+        /*uint256 amount1Desired*/
+    /*) external;*/
 
     function addAllLiquidityToPosition(
         uint256 tokenId,
@@ -98,14 +107,14 @@ interface ICHIManager is ICHIDepositCallBack {
 
     function addTickPercents(uint256, uint256[] calldata) external;
 
-    function removeLiquidityFromPosition(
-        uint256 tokenId,
-        uint256 rangeIndex,
-        uint128 liquidity
-    ) external;
+    /*function removeLiquidityFromPosition(*/
+        /*uint256 tokenId,*/
+        /*uint256 rangeIndex,*/
+        /*uint128 liquidity*/
+    /*) external;*/
 
-    function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
-        external;
+    /*function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)*/
+        /*external;*/
 
     function stateOfCHI(uint256 tokenId)
         external

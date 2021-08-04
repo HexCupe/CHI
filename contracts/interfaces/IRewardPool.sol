@@ -10,10 +10,10 @@ interface IRewardPool {
 
     function totalShares(uint256 chiId) external view returns (uint256);
 
-    function earned(
-        uint256 yangId,
-        uint256 chiId
-    ) external view returns (uint256);
+    function earned(uint256 yangId, uint256 chiId)
+        external
+        view
+        returns (uint256);
 
     // Mutation
     function getReward(uint256 yangId, uint256 chiId) external;
