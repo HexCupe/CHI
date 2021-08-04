@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat';
 
-const ChiManager = '0x5E33e65447806eef15dB6FF52917082c3D4FBf56';
+const ChiManager = '0x4f60d5217531a00947cc3592e76A8a01dea7BD2C';
 
 async function main() {
     const CHIDeployerFactory = await ethers.getContractFactory('CHIVaultDeployer');
@@ -11,10 +11,12 @@ async function main() {
     const CHIManager = await CHIManagerFactory.attach(ChiManager)
 
     console.log('CHIVaultDeployer:')
-    console.log(CHIDeployer.address) // 0x3Fe90e5e7c036fC8BB3beBdA884F4F7Fb9dF86bC 
+    //0x17051178f8F43e7d715A94ECf42fD690bf96311D
+    //0x4318d8f0494760f3683801e5945166611ac477fa447d6de65633226cb306e87e
+    console.log(CHIDeployer.address)
     console.log(CHIDeployer.deployTransaction.hash);
 
-    await CHIManager.setDeployer(CHIDeployer.address)
+    await CHIManager.updateDeployer(CHIDeployer.address)
     await CHIDeployer.setCHIManager(CHIManager.address)
 }
 
