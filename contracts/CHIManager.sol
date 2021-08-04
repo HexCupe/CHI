@@ -187,6 +187,10 @@ contract CHIManager is
         rewardPool = _rewardPool;
     }
 
+    function updateDeployer(address _deployer) external onlyManager {
+        deployer = _deployer;
+    }
+
     function _updateReward(uint256 yangId, uint256 chiId, uint256 shares) internal {
         if (rewardPool != address(0)) {
             CHIData storage _chi_ = _chi[chiId];
