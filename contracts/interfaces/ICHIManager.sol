@@ -60,12 +60,6 @@ interface ICHIManager is ICHIDepositCallBack {
         uint256 amount1Min
     ) external returns (uint256 amount0, uint256 amount1);
 
-    /*function addAndRemoveRanges(*/
-        /*uint256 tokenId,*/
-        /*RangeParams[] calldata addRanges,*/
-        /*RangeParams[] calldata removeRanges*/
-    /*) external;*/
-
     function addAndRemoveRangesWithPercents(
         uint256 tokenId,
         RangeParams[] calldata addRanges,
@@ -92,13 +86,6 @@ interface ICHIManager is ICHIDepositCallBack {
         address to
     ) external;
 
-    /*function addLiquidityToPosition(*/
-        /*uint256 tokenId,*/
-        /*uint256 rangeIndex,*/
-        /*uint256 amount0Desired,*/
-        /*uint256 amount1Desired*/
-    /*) external;*/
-
     function addAllLiquidityToPosition(
         uint256 tokenId,
         uint256 amount0Total,
@@ -106,15 +93,6 @@ interface ICHIManager is ICHIDepositCallBack {
     ) external;
 
     function addTickPercents(uint256, uint256[] calldata) external;
-
-    /*function removeLiquidityFromPosition(*/
-        /*uint256 tokenId,*/
-        /*uint256 rangeIndex,*/
-        /*uint128 liquidity*/
-    /*) external;*/
-
-    /*function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)*/
-        /*external;*/
 
     function stateOfCHI(uint256 tokenId)
         external
