@@ -113,8 +113,8 @@ interface ICHIManager is ICHIDepositCallBack {
         /*uint128 liquidity*/
     /*) external;*/
 
-    /*function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)*/
-        /*external;*/
+    function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
+        external;
 
     function stateOfCHI(uint256 tokenId)
         external

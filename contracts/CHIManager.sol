@@ -494,41 +494,6 @@ contract CHIManager is
         emit ChangeLiquidity(tokenId, _chi_.vault);
     }
 
-    /*function addAndRemoveRanges(*/
-        /*uint256 tokenId,*/
-        /*RangeParams[] calldata addRanges,*/
-        /*RangeParams[] calldata removeRanges*/
-    /*)*/
-        /*external*/
-        /*override*/
-        /*isAuthorizedForToken(tokenId)*/
-        /*onlyWhenNotPaused(tokenId)*/
-    /*{*/
-        /*CHIData storage _chi_ = _chi[tokenId];*/
-        /*ICHIVault vault = ICHIVault(_chi_.vault);*/
-        /*for (uint256 i = 0; i < vault.getRangeCount(); i++) {*/
-            /*vault.removeAllLiquidityFromPosition(i);*/
-        /*}*/
-        /*_addAndRemoveRanges(_chi_.vault, addRanges, removeRanges);*/
-        /*_chi_.equational = true;*/
-
-        /*IUniswapV3Pool pool = IUniswapV3Pool(_chi_.pool);*/
-        /*uint256 availableBalance0 = IERC20(pool.token0())*/
-            /*.balanceOf(_chi_.vault)*/
-            /*.sub(vault.accruedProtocolFees0());*/
-        /*uint256 availableBalance1 = IERC20(pool.token1())*/
-            /*.balanceOf(_chi_.vault)*/
-            /*.sub(vault.accruedProtocolFees1());*/
-        /*if (availableBalance0 > 0 || availableBalance1 > 0) {*/
-            /*_addAllLiquidityToPosition(*/
-                /*_chi_,*/
-                /*availableBalance0,*/
-                /*availableBalance1*/
-            /*);*/
-        /*}*/
-        /*emit ChangeLiquidity(tokenId, _chi_.vault);*/
-    /*}*/
-
     function addRange(
         uint256 tokenId,
         int24 tickLower,
@@ -609,45 +574,16 @@ contract CHIManager is
         emit ChangeLiquidity(tokenId, _chi_.vault);
     }
 
-    /*function addLiquidityToPosition(*/
-        /*uint256 tokenId,*/
-        /*uint256 rangeIndex,*/
-        /*uint256 amount0Desired,*/
-        /*uint256 amount1Desired*/
-    /*) external override onlyManager onlyWhenNotPaused(tokenId) {*/
-        /*CHIData storage _chi_ = _chi[tokenId];*/
-        /*ICHIVault(_chi_.vault).addLiquidityToPosition(*/
-            /*rangeIndex,*/
-            /*amount0Desired,*/
-            /*amount1Desired*/
-        /*);*/
-        /*emit ChangeLiquidity(tokenId, _chi_.vault);*/
-    /*}*/
-
-    /*function removeLiquidityFromPosition(*/
-        /*uint256 tokenId,*/
-        /*uint256 rangeIndex,*/
-        /*uint128 liquidity*/
-    /*) external override onlyManager {*/
-        /*CHIData storage _chi_ = _chi[tokenId];*/
-        /*require(!_chi_.archived, "CHI Archived");*/
-        /*ICHIVault(_chi_.vault).removeLiquidityFromPosition(*/
-            /*rangeIndex,*/
-            /*liquidity*/
-        /*);*/
-        /*emit ChangeLiquidity(tokenId, _chi_.vault);*/
-    /*}*/
-
-    /*function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)*/
-        /*external*/
-        /*override*/
-        /*onlyManager*/
-    /*{*/
-        /*CHIData storage _chi_ = _chi[tokenId];*/
-        /*require(!_chi_.archived, "CHI Archived");*/
-        /*ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);*/
-        /*emit ChangeLiquidity(tokenId, _chi_.vault);*/
-    /*}*/
+    function removeAllLiquidityFromPosition(uint256 tokenId, uint256 rangeIndex)
+        external
+        override
+        onlyManager
+    {
+        CHIData storage _chi_ = _chi[tokenId];
+        require(!_chi_.archived, "CHI Archived");
+        ICHIVault(_chi_.vault).removeAllLiquidityFromPosition(rangeIndex);
+        emit ChangeLiquidity(tokenId, _chi_.vault);
+    }
 
     function pausedCHI(uint256 tokenId) external override {
         CHIData storage _chi_ = _chi[tokenId];
